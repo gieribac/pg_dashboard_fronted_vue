@@ -2,6 +2,8 @@
 import { ref, Ref } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, numeric, alpha, minLength, maxLength, email, alphaNum, helpers } from '@vuelidate/validators';
+import AdminRegData from '../interfaces/AdminRegData';
+import AdminLoginData from '../interfaces/AdminLoginData';
 const isOpen = ref(false);
 const passwordRegex = helpers.regex(/^[\x21-\x7E]/);
 
@@ -19,20 +21,6 @@ const showParagraph2: Ref<boolean> = ref(false);
 // Estados para controlar la visibilidad de cada pop-up
 const showRegisterPopup: Ref<boolean> = ref(false);
 const showLoginPopup: Ref<boolean> = ref(false);
-
-// interfaces para registro y login
-interface UserRegData {
-  name: string;
-  no_doc: string;
-  email: string;
-  username: string;
-  password: string;
-}
-
-interface UserLoginData {
-  username: string;
-  password: string;
-}
 
 // objetos con las reglas de validación
 const rulesRegData = {
@@ -63,8 +51,9 @@ const rulesLoginData = {
 }
 
 // Formularios reactivos para cada pop-up
-const registerForm = ref<UserRegData>({ name: '', no_doc: '', email: '', username: '', password: '' });
-const loginForm = ref<UserLoginData>({ username: '', password: '' });
+const registerForm = ref<AdminRegData>({ name: '', no_doc: '', email: '', username: '', password: '' });
+
+const loginForm = ref<AdminLoginData>({ username: '', password: '' });
 
 // crear el objeto de validación
 const v_reg$ = useVuelidate(rulesRegData, registerForm);

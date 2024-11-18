@@ -7,26 +7,28 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, alpha, minLength, maxLength } from '@vuelidate/validators';
 import { ref, Ref } from 'vue';
 import { useRouter } from 'vue-router';
+import Dashboard_Data from '../interfaces/DashboardData';
 import ChangePass from '../components/adminPop_up/ChangePass.vue';
 import DestroyUser from '../components/adminPop_up/DestroyUser.vue';
 import QueryResult from '../components/QueryResult.vue';
 
+//consts
+const dataEmpty: Dashboard_Data = {
+    post: true,
+    author: '',
+    title: '',
+    description: '',
+    place: '',
+    urlDashboard: '',
+}
 // Crear referencia al router
 const router = useRouter();
 
 const destroyUserPopup1: Ref<boolean> = ref(false);
 const passChangePopup1: Ref<boolean> = ref(false);
 
-interface dashboardData {
-  name: string;
-  description: string;
-  place: string;
-  dashboard: string;
-  post: boolean;
-}
-
 const rulesDashboardData = {
-  name: {
+  title: {
     required, alpha, minLength: minLength(5), maxLength: maxLength(20)
   },
   description: {
@@ -35,31 +37,19 @@ const rulesDashboardData = {
   place: {
     required, alpha, minLength: minLength(5), maxLength: maxLength(20)
   },
-  dashboard: {
-    required, maxLength: maxLength(300)
+  urlDashboard: {
+    required, maxLength: maxLength(400)
   }
 }
 
-const dashboardDataForm = ref<dashboardData>({
-  name: '',
-  description: '',
-  place: '',
-  dashboard: '',
-  post: true
-})
+const dashboardDataForm = ref<Dashboard_Data>(dataEmpty)
 // crear el objeto de validación
 
 const v_reg$ = useVuelidate(rulesDashboardData, dashboardDataForm);
 
 const handleSubmit = (): void => {
   console.log('Datos de registro:', JSON.stringify(dashboardDataForm.value));
-  dashboardDataForm.value = {
-    name: '',
-    description: '',
-    place: '',
-    dashboard: '',
-    post: true
-  }
+  dashboardDataForm.value = dataEmpty;
 }
 
 
@@ -126,21 +116,21 @@ const open_destroyUserPop_up = (): void => {
         <input class="form-control" type="checkbox" id="checkbox" checked="true" v-model="dashboardDataForm.post">
       </div>
       <div class="form_div">
-        <label for="nombre" class="form-label">Nombre</label>
-        <textarea rows="1" type="text" class="form-control" id="nombre" v-model="dashboardDataForm.name">
+        <label for="nombre" class="form-label">Titulo</label>
+        <textarea rows="1" type="text" class="form-control" v-model="dashboardDataForm.title">
             </textarea>
       </div>
       <div class="form_div">
         <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" rows="1" v-model="dashboardDataForm.description"></textarea>
+        <textarea class="form-control"  rows="1" v-model="dashboardDataForm.description"></textarea>
       </div>
       <div class="form_div">
         <label for="lugar" class="form-label">Lugar</label>
-        <textarea rows="1" type="text" class="form-control" id="lugar" v-model="dashboardDataForm.place"></textarea>
+        <textarea rows="1" type="text" class="form-control"  v-model="dashboardDataForm.place"></textarea>
       </div>
       <div class="form_div">
         <label for="lugar" class="form-label">Dashboard (URL)</label>
-        <textarea rows="1" type="text" class="form-control" id="lugar" v-model="dashboardDataForm.dashboard"></textarea>
+        <textarea rows="1" type="text" class="form-control"  v-model="dashboardDataForm.urlDashboard"></textarea>
       </div>
       <div class="button">
         <button type="submit" class="btn btn-primary" :disabled="v_reg$.$invalid">
@@ -306,10 +296,6 @@ h1 {
         form {
             display: flex;
             flex-direction: column;
-
-            /* >* {
-                margin: 0 2px;
-            } */
         }
     }
 

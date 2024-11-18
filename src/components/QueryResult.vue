@@ -1,31 +1,32 @@
 <script lang="ts" setup>
-import { ref, Ref } from 'vue';
-
-const tag_: string = '<iframe title="pa" src="" frameborder="0" allowFullScreen="true">';
+import { ref, Ref, onMounted } from 'vue';
+import PostService from '../services/PostService';
+import Dashboard_Data from '../interfaces/DashboardData';
+const tag: string = '<iframe title="pa" src="" frameborder="0" allowFullScreen="true">';
 let visibilidad: Ref<Boolean> = ref(false);
 
-// Definir la clase DashboardData
-interface Dashboard_Data {
-    post: boolean;
-    name: string;
-    description: string;
-    place: string;
-    url: string;
-}
+
+//servicio
+    const service = new PostService();
+    const posts = service.getPosts();
+
+    onMounted(async () => {await service.fetchAll()})
+
 class DashboardData implements Dashboard_Data {
     post: boolean;
-    name: string;
+    title: string;
     description: string;
     place: string;
-    url: string;
+    urlDashboard: string;
 
     constructor() {
         this.post = true;
-        this.name = "Nombre ";
+        this.title = "Nombre ";
         this.description = "Descripción ";
         this.place = "Lugar";
-        this.url = "URL ";
+        this.urlDashboard = "URL ";
     }
+    
 }
 
 // Crear una instancia de DashboardData con datos iniciales
@@ -34,10 +35,10 @@ const dashboardDataInstance = new DashboardData();
 // Crear un ref para almacenar los datos del formulario y hacerlos reactivos
 const dashboardDataForm = ref<Dashboard_Data>({
     post: dashboardDataInstance.post,
-    name: dashboardDataInstance.name,
+    title: dashboardDataInstance.title,
     description: dashboardDataInstance.description,
     place: dashboardDataInstance.place,
-    url: dashboardDataInstance.url
+    urlDashboard: dashboardDataInstance.urlDashboard
 });
 
 // Función para manejar el envío del formulario
@@ -60,27 +61,27 @@ const visualizarDashboard = (): void => {
             </div>
 
             <div class="form_div">
-                <label for="nombre" class="form-label">Nombre</label>
-                <textarea rows="1" type="text" class="form-control" id="nombre" v-model="dashboardDataForm.name"
-                    :placeholder="dashboardDataInstance.name"></textarea>
+                <label for="nombre" class="form-label">Titulo</label>
+                <textarea rows="1" type="text" class="form-control" v-model="dashboardDataForm.title"
+                    :placeholder="dashboardDataInstance.title"></textarea>
             </div>
 
             <div class="form_div">
                 <label for="descripcion" class="form-label">Descripción</label>
-                <textarea class="form-control" id="descripcion" rows="1" v-model="dashboardDataForm.description"
+                <textarea class="form-control"  rows="1" v-model="dashboardDataForm.description"
                     :placeholder="dashboardDataInstance.description"></textarea>
             </div>
 
             <div class="form_div">
                 <label for="lugar" class="form-label">Lugar</label>
-                <textarea rows="1" type="text" class="form-control" id="lugar" v-model="dashboardDataForm.place"
+                <textarea rows="1" type="text" class="form-control"  v-model="dashboardDataForm.place"
                     :placeholder="dashboardDataInstance.place"></textarea>
             </div>
 
             <div class="form_div">
                 <label for="dashboard" class="form-label">Dashboard</label>
-                <textarea rows="1" type="text" class="form-control" id="dashboard" v-model="dashboardDataForm.url"
-                    :placeholder="dashboardDataInstance.url"></textarea>
+                <textarea rows="1" type="text" class="form-control" v-model="dashboardDataForm.urlDashboard"
+                    :placeholder="dashboardDataInstance.urlDashboard"></textarea>
             </div>
             <div class="container_btn">
                 <div class="button">
@@ -102,6 +103,11 @@ const visualizarDashboard = (): void => {
 
         </form>
 
+    </div>
+    <div class="prueba">
+        <ul>
+            <li v-for="p in posts" :key="p.id">{{p.title}}</li>
+        </ul>
     </div>
 </template>
 
