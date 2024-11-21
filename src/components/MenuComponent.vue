@@ -281,7 +281,7 @@ ul {
   span {
   position: relative;
   top: 12px;
-  right: 0px; 
+  right: 12px; 
   } 
   li {
     display: flex;
