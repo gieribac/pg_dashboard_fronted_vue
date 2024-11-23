@@ -7,21 +7,21 @@
     
     // objetos con las reglas de validación
     const rulesRegData = {
-    name: {
-        required, alpha, minLength: minLength(5), maxLength: maxLength(30)
-    },
-    no_doc: {
-        required, numeric, minLength: minLength(6), maxLength: maxLength(12)
-    },
-    email: {
-        required, email
-    },
-    username: {
-        required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
-    },
-    password: {
-        required,  minLength: minLength(6), maxLength: maxLength(10)
-    }
+        name: {
+            required, alpha, minLength: minLength(5), maxLength: maxLength(30)
+        },
+        no_doc: {
+            required, numeric, minLength: minLength(6), maxLength: maxLength(12)
+        },
+        email: {
+            required, email
+        },
+        username: {
+            required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
+        },
+        password: {
+            required,  minLength: minLength(6), maxLength: maxLength(10)
+        }
     }
     const registerForm = ref<AdminRegData>({ name: '', no_doc: '', email: '', username: '', password: '' });
     const v_reg$ = useVuelidate(rulesRegData, registerForm);

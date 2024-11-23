@@ -1,16 +1,16 @@
 // ../services/PostService.ts
 import {ref, Ref} from 'vue';
-import IPost from '../interfaces/DashboardData';
+import Dashboard_Data from '../interfaces/DashboardData';
 const url: string = 'http://localhost:8000/api/maps';
 class PostService { //clase de servicio para consumo de api
-	private posts: Ref<IPost[]>
+	private posts: Ref<Dashboard_Data[]>
 	constructor() {
         // this.posts = ref([]);
-        this.posts = ref<IPost[]>([])
+        this.posts = ref<Dashboard_Data[]>([])
     }
 
     //getter para post
-    getPosts (): Ref<IPost[]> {
+    getPosts (): Ref<Dashboard_Data[]> {
         return this.posts
     }
 
@@ -20,7 +20,7 @@ class PostService { //clase de servicio para consumo de api
         try {
             
             const response: Response = await fetch (url);
-            const json: IPost = await response.json();
+            const json: Dashboard_Data[] = await response.json();
             this.posts.value = json;
         } catch (e){
             console.log(e)

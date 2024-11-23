@@ -26,7 +26,6 @@ class DashboardData implements Dashboard_Data {
         this.place = "Lugar";
         this.urlDashboard = "URL ";
     }
-    
 }
 
 // Crear una instancia de DashboardData con datos iniciales
