@@ -26,34 +26,49 @@
     const registerForm = ref<AdminRegData>({ name: '', no_doc: '', email: '', username: '', password: '' });
     const v_reg$ = useVuelidate(rulesRegData, registerForm);
     const submitRegister = ():void => {
-    // Manejar el envío del formulario de registro aquí
-    console.log('Datos de registro:', JSON.stringify(registerForm.value));
-    //emit
-    const passChangePopup: Ref<boolean> = ref(false);
-    const emit = defineEmits(["flag"])
-    const closeRegister = ():void => {
-        emit("flag", passChangePopup.value)
+        // Manejar el envío del formulario de registro aquí
+        console.log('Datos de registro:', JSON.stringify(registerForm.value));
+        //emit
+        const passChangePopup: Ref<boolean> = ref(false);
+        const emit = defineEmits(["flag"]);
+
+        const closeRegister = ():void => {
+            emit("flag", passChangePopup.value);
+        }
     }
-};
+
 </script>
 <template>
+    <div class="overlay">
     <!-- Formulario de registro (Pop-up) -->
   <div class="popup">
       <h3>Actualizar registro</h3>
       <form @submit.prevent="submitRegister">
         <input type="text" placeholder="Nombre" v-model="registerForm.name"  />
         <input type="text" id="NoDoc" placeholder="No. documento" v-model="registerForm.no_doc">
-        <input type="email" placeholder="Correo" v-model="registerForm.email"  />
+        <input type="email" placeholder="E-mail" v-model="registerForm.email"  />
         <input type="text" placeholder="Usuario" v-model="registerForm.username"  />
         <input type="password" placeholder="Contraseña" v-model="registerForm.password" required />
-        <div class="button__container">
+;        <div class="button__container">
           <button class="accept" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
           <button class="cancel" type="button" @click="closeRegister">Cancelar</button>
         </div>        
       </form>
-    </div>
+    </div></div>
 </template>
 <style scoped>
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
 .read-the-docs {
   color: #888;
 }

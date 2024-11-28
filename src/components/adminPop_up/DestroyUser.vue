@@ -43,6 +43,7 @@ const submitPassChange = (): void => {
 </script>
 
 <template>
+  <div class="overlay">
   <div class="popup">
     <h3 class="">Eliminar administrador actual</h3>
     <form class="" @submit.prevent="submitPassChange">
@@ -53,9 +54,21 @@ const submitPassChange = (): void => {
         <button class="cancel" type="button" @click="close_passChangePop_up">Cancelar</button>
       </div>
     </form>
-  </div>
+  </div></div>
 </template>
 <style>
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
 .popup {
   position: fixed;
   top: 50%;

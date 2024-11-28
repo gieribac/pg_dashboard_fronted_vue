@@ -10,9 +10,9 @@ import { useRouter } from 'vue-router';
 import Dashboard_Data from '../interfaces/DashboardData';
 import ChangePass from '../components/adminPop_up/ChangePass.vue';
 import DestroyUser from '../components/adminPop_up/DestroyUser.vue';
-import QueryResult from '../components/QueryResult.vue';
 import PatchUpdate from '../components/adminPop_up/PatchUpdate.vue';
 import FormD from '../components/FormD.vue';
+import MenuComponent from '../components/MenuComponent.vue';
 
 //consts
 const dataEmpty: Dashboard_Data = {
@@ -138,7 +138,7 @@ const m_close = (): void => {
         <p>Eliminar cuenta</p>
       </li>
       <li class="li_" v-show="!ver && otorgarAutorizacion" @click="open_destroyUserPop_up">
-        <p>Autorizar Nuevo</p>
+        <p>Autorizaciones</p>
       </li>
       <li class="li_" v-show="!ver" @click="cerrarSesion">
         <p>Cerrar Sesión</p>
@@ -182,7 +182,7 @@ const m_close = (): void => {
   <ChangePass @click="close_passChangePop_up" v-if="passChangePopup1" />
   <PatchUpdate @click="close_patchUpdatePop_up" v-if="patchUpdatePopup1" />
   <DestroyUser @click="close_destroyUserPop_up" v-if="destroyUserPopup1" />
-  <QueryResult />
+  <MenuComponent />
   </div>
   
 </template>

@@ -48,6 +48,9 @@ const submitPassChange = ():void => {
 </script>
 
 <template>
+  <div class="overlay">
+
+  
      <!-- Formulario de cambio de contraseña (Pop-up) -->
      <div class="popup">
       <h3>Cambio de Contraseña</h3>
@@ -60,9 +63,22 @@ const submitPassChange = ():void => {
           <button class="cancel" type="button" @click="close_passChangePop_up">Cancelar</button>  
         </div>        
       </form>
-    </div>
+    </div></div>
 </template>
 <style>
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
 .popup {
   position: fixed;
   top: 50%;
@@ -77,50 +93,61 @@ const submitPassChange = ():void => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width:20%;
-  form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    input {
-      width: 80%;
-      margin: 0.5em;
-    }
-    .button__container {
-      display: flex;
-      flex-direction: row;
-      button {
-        display: flex;
-        width: 50%;
-        height: 2em;
-        margin: 0.3em;        
-        align-items: center;
-        justify-content: center;
-      }
-      .accept{
-        background-color: #090c9b;
-        color: #fbfff1;
-        &:hover {
-        background-color: #3066be;
-        }
-      }
-      .cancel{
-        background-color: #3c3744;
-        color: #fbfff1;
-        &:hover {
-        background-color: #3066be;
-        }
-      }
-    }  
-    @media (max-width: 1200px) { 
-        .button__container  {
-            flex-direction: column;
-            button {
-                width: 80%;
-            }
-        }
-    } 
-  }  
+  min-width: 20%;
 }
+
+.popup form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.popup form input {
+  width: 80%;
+  margin: 0.5em;
+}
+
+.popup .button__container {
+  display: flex;
+  flex-direction: row;
+}
+
+.popup .button__container button {
+  display: flex;
+  width: 50%;
+  height: 2em;
+  margin: 0.3em;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup .button__container .accept {
+  background-color: #090c9b;
+  color: #fbfff1;
+}
+
+.popup .button__container .accept:hover {
+  background-color: #3066be;
+}
+
+.popup .button__container .cancel {
+  background-color: #3c3744;
+  color: #fbfff1;
+}
+
+.popup .button__container .cancel:hover {
+  background-color: #3066be;
+}
+
+@media (max-width: 1200px) {
+  .popup .button__container {
+    flex-direction: column;
+  }
+
+  .popup .button__container button {
+    width: 80%;
+  }
+}
+
 </style>
