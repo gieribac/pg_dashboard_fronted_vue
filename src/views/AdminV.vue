@@ -1,7 +1,10 @@
-<!-- 1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña.
+<!-- 1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña. 
 2. crear componente para cargar mapa con las obciones de actualizar y de eliminar, por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
-3. en mainv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo. 
+3. en adminv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo. 
+
 4. crear logica de componente AdminV, administrador principal puede otorgar permisos y aliminar cualquier cuenta de administrador, administradoy comun solo puede eliminar su propia cuenta.
+check_circle
+error
 -->
 
 <script setup lang="ts">
@@ -17,6 +20,7 @@ import PrevDashboard from '../components/adminPop_up/PrevDashboard.vue';
 import FormD from '../components/FormD.vue';
 import MenuComponent from '../components/MenuComponent.vue';
 import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
+import AlertPop_up from '../components/AlertPop_up.vue';
 
 //consts
 const dataEmpty: Dashboard_Data = {
@@ -35,6 +39,7 @@ const patchUpdatePopup1: Ref<boolean> = ref(false);
 const passChangePopup1: Ref<boolean> = ref(false);
 const statusOA: Ref<boolean> = ref(false);
 const otorgarAutorizacion: Ref<boolean> = ref(true);
+let statusPupupAlert: boolean = false;//true: good; false: error
 
 const rulesDashboardData = {
   title: {
@@ -52,7 +57,7 @@ const rulesDashboardData = {
 }
 
 const dashboardDataForm = ref<Dashboard_Data>(dataEmpty);
-const dForm: Ref<Boolean> = ref(true);//true is Form1, false is form2
+const dForm: boolean = true;//true is Form1, false is form2
 // crear el objeto de validación
 
 const v_reg$ = useVuelidate(rulesDashboardData, dashboardDataForm);
@@ -97,6 +102,20 @@ const handleSubmit = (): void => {
     alert('cerrar sesión');
     router.push({ name: 'MainV' });
   }
+const showAlert: Ref<boolean> = ref(false);
+
+// Función para montar la alerta
+const triggerAlert = (status: boolean):void => {
+    showAlert.value = true;
+    statusPupupAlert = status;
+};
+// triggerAlert(false)
+// Maneja el cierre de la alerta desde el hijo
+const handleClose = () => {
+  showAlert.value = false;
+  
+};
+
 </script>
 <template>
   <div class="cont__main">
@@ -109,6 +128,7 @@ const handleSubmit = (): void => {
     <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
     <MenuComponent @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" /> 
+    <AlertPop_up v-if="showAlert" :gj="statusPupupAlert" @close="handleClose"/>
 
   </div>
   
@@ -141,8 +161,8 @@ const handleSubmit = (): void => {
   width: 100vw;
   margin: auto;
   background-color: red;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    border: 2px solid red;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid red;
 }
 @media (max-width: 768px) {
   .cont__main h2 {
