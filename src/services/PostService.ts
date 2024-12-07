@@ -1,7 +1,7 @@
 // ../services/PostService.ts
 import {ref, Ref} from 'vue';
 import Dashboard_Data from '../interfaces/DashboardData';
-const url: string = 'http://localhost:8000/api/maps';
+const url: string = 'http://127.0.0.1:8000/api/maps';
 class PostService { //clase de servicio para consumo de api
 	private posts: Ref<Dashboard_Data[]>
 	constructor() {

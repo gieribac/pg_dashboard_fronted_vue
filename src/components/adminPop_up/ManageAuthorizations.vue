@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-
+//Pop-up Autorizar Nuevo
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength, numeric, email } from '@vuelidate/validators';
 import { defineEmits, ref, Ref } from 'vue';

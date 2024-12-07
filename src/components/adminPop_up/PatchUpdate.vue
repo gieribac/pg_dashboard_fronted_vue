@@ -3,7 +3,6 @@
     import { useVuelidate } from '@vuelidate/core';
     import AdminRegData from '../../interfaces/AdminRegData';
     import { required, numeric, alpha, minLength, maxLength, email, alphaNum } from '@vuelidate/validators';
-
     
     // objetos con las reglas de validación
     const rulesRegData = {

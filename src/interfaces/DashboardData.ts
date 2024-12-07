@@ -12,3 +12,4 @@ export default interface Dashboard_Data {
 
 //ajustar modelo en la api rest
 //crear modelo de administrador
+

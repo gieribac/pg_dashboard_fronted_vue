@@ -1,23 +1,16 @@
-<script lang="ts">
-export const listEmmits: string[] = [
-  "in", 
-  "rg", 
-  "cl", 
-  "cs", 
-  "info", 
-  "eRegresar", 
-  "eChange", 
-  "ePatch", 
-  "eDestroy", 
-  "eAutorizar", 
-  "eLogout"
-];
-</script>
-
 <script setup lang="ts">
-import { listEmmits } from '../components/MenuComponent.vue';
-import { defineEmits, ref, Ref } from 'vue';
+import { listEmmits } from '../components/constantInfo/listEmmits';
+import { defineEmits, defineProps, ref, Ref } from 'vue';
 import { useRoute } from "vue-router";
+
+  // Props
+  const prop = defineProps({
+  adminMain: {
+      type: Boolean,
+      default: false, // true = adminMain. false  = anyAdmin
+  }, 
+  });
+
 //estado para version del menu
 const menu: Boolean = useRoute().name=='MainV';
 //estados reactivos para controlar la visibilidad de parrafos del menu
@@ -132,7 +125,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>
       </li>
-      <li @click="alClick(9)">
+      <li v-show="prop.adminMain" @click="alClick(9)">
         <p v-show="showParagraph[9]">Autorizar nuevo</p>
         <div class="li_container" @mouseenter="handleMouseEnter(9)" @mouseleave="handleMouseLeave(9)">
           <span class="material-symbols-outlined">

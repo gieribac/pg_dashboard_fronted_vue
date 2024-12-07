@@ -1,7 +1,3 @@
-<!-- 1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña.
-2. crear componente para cargar mapa con las obciones de actualizar y de eliminar, por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
-3. en mainv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo. -->
-
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
 import { required, alpha, minLength, maxLength } from '@vuelidate/validators';

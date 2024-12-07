@@ -1,165 +1,146 @@
-<!-- 
- 0. añadir la opcion de borrar el respectivo dashboard
- 1. hay que decidir si utilizar logica de form1 o form2 mediante heredar props
- 2. si es form 1 se haran validaciones y envio por metodo post, si es form2 solo se validan campos editados y se envian mediante patch
-3. hay que procesar la data que se mostrara en placeholder a los form 2 en el componente padre AdminV para desestructurar el arreglo y usar v-for 
-4. pendiente crear reutilizar componente del menu hamburquesa tanto en pagina MainV como en AdminV
- -->
 
-<script setup lang="ts">
-import { useVuelidate } from '@vuelidate/core';
-import { required, minLength, maxLength } from '@vuelidate/validators';
-import { ref, Ref, computed, defineProps, defineEmits } from 'vue';;
-import Dashboard_Data from '../interfaces/DashboardData';
+ <script setup lang="ts">
+    import { useVuelidate } from '@vuelidate/core';
+    import { required, minLength, maxLength } from '@vuelidate/validators';
+    import { ref, watch, computed, defineProps, withDefaults, defineEmits } from 'vue';
+    import Dashboard_Data from '../interfaces/DashboardData';
+    import { EMPTY_DASHBOARD } from '../components/constantInfo/empty_dashboard';
+// Props
 
-const prop = defineProps({
-    flag: {//true is form for post, false is for patch
-        type: Boolean,
-        default: false, // Valor predeterminado
-    },
-});
-
-//consts
-const prevDashboard: Ref<Boolean> = ref(true);
-const dataEmpty: Dashboard_Data = {
-    post: true,
-    author: '',
-    title: '',
-    description: '',
-    place: '',
-    urlDashboard: ''
-}
-//reglas para validacion del formulario post
-const rulesDashboardData = {
-    title: {
-        required,  minLength: minLength(3), maxLength: maxLength(30)
-    },
-    description: {
-        required, maxLength: maxLength(2000)
-    },
-    place: {
-        required,  minLength: minLength(3), maxLength: maxLength(30)
-    },
-    urlDashboard: {
-        required, maxLength: maxLength(400)
+const props = withDefaults(
+  defineProps<{
+    flag: boolean;
+    EXISTING_DASHBOARD?: Dashboard_Data;
+  }>(),
+  {
+    flag: false, // Por defecto, la bandera es false
+    EXISTING_DASHBOARD: () => EMPTY_DASHBOARD as Dashboard_Data, // Por defecto, el objeto es EMPTY_DASHBOARD
+  }
+);
+console.log(props.EXISTING_DASHBOARD)
+    // Emits
+    const emit = defineEmits(["prev"]);
+    // Constants 
+    // const EXISTING_DASHBOARD: Dashboard_Data = dataF;
+    const initialData: Dashboard_Data = props.flag ? EMPTY_DASHBOARD : props.EXISTING_DASHBOARD;
+    
+    // Reactive state
+    const dashboardDataForm = ref<Dashboard_Data>({ ...initialData });
+    const prevDashboard = ref(true);
+    
+    // Validation rules
+    const rulesDashboardData = {
+    title: { required, minLength: minLength(3), maxLength: maxLength(30) },
+    description: { required, maxLength: maxLength(2000) },
+    place: { required, minLength: minLength(3), maxLength: maxLength(30) },
+    urlDashboard: { required, maxLength: maxLength(400) },
+    };
+    
+    // Initialize validation
+    const v_reg$ = useVuelidate(rulesDashboardData, dashboardDataForm);
+    
+    // Computed properties
+    const hasNoChanges = computed((): boolean => {
+    return JSON.stringify(dashboardDataForm.value) === JSON.stringify(props.EXISTING_DASHBOARD);
+    });
+    
+    // Utility to get differences
+    const buildDiffObject = (original: Dashboard_Data, updated: Dashboard_Data): any => {
+    const diff: any = {}; // Objeto para almacenar las diferencias
+    for (const key in original) {
+        const typedKey = key as keyof Dashboard_Data; // Garantizar que 'key' es válido
+        // Verificar que el valor ha cambiado y no es undefined
+        if (original[typedKey] !== updated[typedKey] && updated[typedKey] !== undefined) {
+            diff[typedKey] = updated[typedKey];
+        }
     }
-}
-//reglas para validacion del formulario patch
+    return diff;
+};
 
-const rulesDashboardData2 = {
-    title: {
-        minLength: minLength(3), maxLength: maxLength(30)
+
+    // Watchers
+    watch(
+    () => dashboardDataForm.value,
+    (newVal) => {
+        console.log("Form updated:", newVal);
     },
-    description: {
-        maxLength: maxLength(2000)
-    },
-    place: {
-        minLength: minLength(3), maxLength: maxLength(30)
-    },
-    urlDashboard: {
-        maxLength: maxLength(400)
-    }
-}
-const isAnyFieldFilled: Ref<Boolean> = computed((): boolean => {
-  return !!dashboardDataForm.value.title || 
-         !!dashboardDataForm.value.description || 
-         !!dashboardDataForm.value.place || 
-         !!dashboardDataForm.value.urlDashboard;
-});
-const objbd2: Dashboard_Data = {
-    title: "saved title",
-    description: "saved onbservatios",
-    place: "saved lugar",
-    urlDashboard: "saved url",
-    post: true
-}
-const objbd2String: string = JSON.stringify(objbd2);
-let initialData: Dashboard_Data;
-prop.flag ? initialData=dataEmpty : initialData = objbd2;
-const dashboardDataForm = ref<Dashboard_Data>(initialData);
-const v_reg2$ = useVuelidate(rulesDashboardData2, dashboardDataForm);
-const v_reg$ = useVuelidate(rulesDashboardData, dashboardDataForm);
-const notchanges: Ref<Boolean> = computed(():boolean=>{return JSON.stringify(dashboardDataForm.value)==objbd2String});
-const notempty: Ref<Boolean> = computed(():boolean=>{
-    let list: boolean[] = [];
-    list.push(dashboardDataForm.value.title.length > 2);
-    list.push(dashboardDataForm.value.description.length > 2);
-    list.push(dashboardDataForm.value.place.length > 2);
-    list.push(dashboardDataForm.value.urlDashboard.length > 10);
-    const resp: boolean = list.every(elemento => elemento === true);
-    return resp;
-});
+    { deep: true }
+    );
+    
+    // Methods
+    const handleSubmit = (): void => {
+        const differences = buildDiffObject(props.EXISTING_DASHBOARD, dashboardDataForm.value);
+        console.log("Changes submitted:", differences);
+        
+        // Reset form to initial state
+        dashboardDataForm.value = { ...initialData };
+    };
+        
+    const handleViewDashboard = (): void => {
+        emit("prev", prevDashboard.value);
+    };
+        
+    const handleDestroyDashboard = (): void => {
+        console.log("Dashboard destroyed");
+    };
 
-const handleSubmit = (): void => {
-    console.clear()
-    console.log('dashboardDataForm:', JSON.stringify(dashboardDataForm.value));
-    console.log('objbd2:', objbd2String);
-    // console.log('anyFieldFilled', isAnyFieldFilled.value);
-    dashboardDataForm.value = initialData;
-    console.log(notchanges.value);
-}
 
-const emit = defineEmits(["prev"]);
-const visualizarDashboard = (): void => {
-    emit("prev", prevDashboard.value);
-}    
+    
 
-const destroyDashboard = (): void =>{}
-
-</script>
-<template>
+ </script>
+ <template>
     <div class="container__main">
-        <p v-if="prop.flag">Diligenciar todos los campos</p>
-        <p v-if="!prop.flag">Actualizar lo necesario</p>
+        <p v-if="props.flag">Diligenciar todos los campos</p>
+        <p v-if="!props.flag">Actualizar lo necesario</p>
         <div class="main_div form">
             <form class="container__main__s1" @submit.prevent="handleSubmit">
                 <div class="form_div">
                     <label for="title" class="form-label">Titulo</label>
-                    <input v-if="prop.flag" class="form-control" type="text" name="title" id="title" v-model="dashboardDataForm.title">
-                    <input v-if="!prop.flag" class="form-control form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
+                    <input v-if="props.flag" class="form-control  form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
+                    <input v-if="!props.flag" class="form-control form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
                 </div>
                 <div class="form_div">
                     <label for="descripcion" class="form-label">Observaciones</label>
-                    <textarea  v-if="prop.flag" name="descripcion" class="form-control " id="descripcion" rows="3"
+                    <textarea  v-if="props.flag" name="descripcion" class="form-control  form__input " id="descripcion" rows="3"
                         v-model="dashboardDataForm.description"></textarea>
-                    <textarea v-if="!prop.flag" name="descripcion"  class="form-control form__input " id="descripcion" rows="3"
+                    <textarea v-if="!props.flag" name="descripcion"  class="form-control form__input " id="descripcion" rows="3"
                     v-model="dashboardDataForm.description"></textarea>
                 </div>
                 <div class="form_div">
                     <label for="lugar" class="form-label ">Lugar</label>
-                    <input v-if="prop.flag" class="form-control " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
-                    <input v-if="!prop.flag" class="form-control form__input " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
+                    <input v-if="props.flag" class="form-control " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
+                    <input v-if="!props.flag" class="form-control form__input " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
                 </div>
                 <div class="form_div">
                     <label for="url" class="form-label">Dashboard (URL)</label>
-                    <input  v-if="prop.flag" class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
-                    <input  v-if="!prop.flag" class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
+                    <input  v-if="props.flag" class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
+                    <input  v-if="!props.flag" class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
                 </div>
                 <div class="form_div ">
                     <label for="checkbox" class="form-label" name="checkbox">Publicar</label>
                     <div class="form-control--inputcheckbox form-control ">
-                        <input v-if="prop.flag" class="inputcheckbox " type="checkbox" id="checkbox" name="checkbox" 
+                        <input v-if="props.flag" class="inputcheckbox " type="checkbox" id="" name="checkbox" 
                             v-model="dashboardDataForm.post">
-                        <input v-if="!prop.flag" class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="dashboardDataForm.post"
+                        <input v-if="!props.flag" class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="dashboardDataForm.post" 
                         >
                     </div>
                 </div>
                 <div class="container-button">
                     <div class="button">
-                        <button v-if="prop.flag" type="submit" class="btn btn-primary" :disabled="v_reg$.$invalid">
+                        <button v-if="props.flag" type="submit" class="btn btn-primary" :disabled="v_reg$.$invalid">
                             <span class="material-symbols-outlined">upload</span>Cargar
                         </button>
-                        <button v-if="!prop.flag" type="submit" class="btn btn-primary" :disabled="!(!v_reg$.$invalid && !!isAnyFieldFilled && !notchanges)">
+                        <button v-if="!props.flag" type="submit" class="btn btn-primary" :disabled="!!hasNoChanges || v_reg$.$invalid">
                             <span class="material-symbols-outlined">upload</span>Cargar
                         </button>
                     </div>
-                    <div class="button button--visibilidad" v-if="!prop.flag">
-                        <button class=" btn btn-primary ver" type="button" @click="visualizarDashboard">
+                    <div class="button button--visibilidad" v-if="!props.flag">
+                        <button class=" btn btn-primary ver" type="button" @click="handleViewDashboard ">
                             <span class="material-symbols-outlined">visibility</span>Ver
                         </button>
                     </div>
-                    <div class="button" v-if="!prop.flag">
-                        <button class="btn btn-primary delete" type="button" @click="destroyDashboard">
+                    <div class="button" v-if="!props.flag">
+                        <button class="btn btn-primary delete" type="button" @click="handleDestroyDashboard">
                             <span class="material-symbols-outlined">delete</span>Eliminar
                         </button>
                     </div>
@@ -278,6 +259,10 @@ const destroyDashboard = (): void =>{}
     color: black;
 }
 
+.form__input {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
 @media (max-width: 768px) {
 
     .container__main 

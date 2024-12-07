@@ -1,18 +1,14 @@
-<!-- 1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña. 
+<!-- 
+1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña. 
 2. crear componente para cargar mapa con las obciones de actualizar y de eliminar, por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
 3. en adminv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo. 
-
 4. crear logica de componente AdminV, administrador principal puede otorgar permisos y aliminar cualquier cuenta de administrador, administradoy comun solo puede eliminar su propia cuenta.
-check_circle
-error
+
 -->
 
 <script setup lang="ts">
-import { useVuelidate } from '@vuelidate/core';
-import { required, alpha, minLength, maxLength } from '@vuelidate/validators';
-import { ref, Ref } from 'vue';
+import { ref, Ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import Dashboard_Data from '../interfaces/DashboardData';
 import ChangePass from '../components/adminPop_up/ChangePass.vue';
 import DestroyUser from '../components/adminPop_up/DestroyUser.vue';
 import PatchUpdate from '../components/adminPop_up/PatchUpdate.vue';
@@ -21,16 +17,14 @@ import FormD from '../components/FormD.vue';
 import MenuComponent from '../components/MenuComponent.vue';
 import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
 import AlertPop_up from '../components/AlertPop_up.vue';
+import PostService from '../services/PostService';
+const service = new PostService();
+const posts = service.getPosts();
+onMounted(async () => {
+  await service.fetchAll();
 
+})
 //consts
-const dataEmpty: Dashboard_Data = {
-  post: true,
-  author: '',
-  title: '',
-  description: '',
-  place: '',
-  urlDashboard: ''
-}
 // Crear referencia al router
 const router = useRouter();
 
@@ -38,34 +32,10 @@ const destroyUserPopup1: Ref<boolean> = ref(false);
 const patchUpdatePopup1: Ref<boolean> = ref(false);
 const passChangePopup1: Ref<boolean> = ref(false);
 const statusOA: Ref<boolean> = ref(false);
-const otorgarAutorizacion: Ref<boolean> = ref(true);
+const otorgarAutorizacion: boolean = true;
 let statusPupupAlert: boolean = false;//true: good; false: error
 
-const rulesDashboardData = {
-  title: {
-    required, alpha, minLength: minLength(5), maxLength: maxLength(20)
-  },
-  description: {
-    required, maxLength: maxLength(2000)
-  },
-  place: {
-    required, alpha, minLength: minLength(5), maxLength: maxLength(20)
-  },
-  urlDashboard: {
-    required, maxLength: maxLength(400)
-  }
-}
-
-const dashboardDataForm = ref<Dashboard_Data>(dataEmpty);
 const dForm: boolean = true;//true is Form1, false is form2
-// crear el objeto de validación
-
-const v_reg$ = useVuelidate(rulesDashboardData, dashboardDataForm);
-
-const handleSubmit = (): void => {
-  console.log('Datos de registro:', JSON.stringify(dashboardDataForm.value));
-  dashboardDataForm.value = dataEmpty;
-}
 
   const preview: Ref<Boolean> = ref(false);
   const openPreview  = (m: boolean): void => {
@@ -120,14 +90,20 @@ const handleClose = () => {
 <template>
   <div class="cont__main">
     <h2 >Carga de dashboards</h2>      
-    <FormD :flag="dForm"/>
+    <FormD :flag="dForm" />
     <h2>Edición de dashboards</h2>   
-    <FormD @prev="openPreview" :flag="!dForm"/>
+    <FormD
+      v-for="(post, index) in posts"
+      :key="index"
+      @prev="openPreview"
+      :flag="!dForm"
+      :EXISTING_DASHBOARD="post"
+    />
     <ChangePass @click="fChange" v-if="passChangePopup1" />
     <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" />
     <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
-    <MenuComponent @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" /> 
+    <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" /> 
     <AlertPop_up v-if="showAlert" :gj="statusPupupAlert" @close="handleClose"/>
 
   </div>
