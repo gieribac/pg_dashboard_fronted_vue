@@ -2,9 +2,10 @@
  <script setup lang="ts">
     import { useVuelidate } from '@vuelidate/core';
     import { required, minLength, maxLength } from '@vuelidate/validators';
-    import { ref, watch, computed, defineProps, withDefaults, defineEmits } from 'vue';
+    import { ref, Ref, watch, computed, defineProps, withDefaults } from 'vue';
     import Dashboard_Data from '../interfaces/DashboardData';
     import { EMPTY_DASHBOARD } from '../components/constantInfo/empty_dashboard';
+    import PrevDashboard from '../components/adminPop_up/PrevDashboard.vue';
 // Props
 
 const props = withDefaults(
@@ -17,16 +18,12 @@ const props = withDefaults(
     EXISTING_DASHBOARD: () => EMPTY_DASHBOARD as Dashboard_Data, // Por defecto, el objeto es EMPTY_DASHBOARD
   }
 );
-console.log(props.EXISTING_DASHBOARD)
-    // Emits
-    const emit = defineEmits(["prev"]);
     // Constants 
-    // const EXISTING_DASHBOARD: Dashboard_Data = dataF;
+
     const initialData: Dashboard_Data = props.flag ? EMPTY_DASHBOARD : props.EXISTING_DASHBOARD;
-    
+    const preview: Ref<Boolean> = ref(false);
     // Reactive state
     const dashboardDataForm = ref<Dashboard_Data>({ ...initialData });
-    const prevDashboard = ref(true);
     
     // Validation rules
     const rulesDashboardData = {
@@ -57,7 +54,6 @@ console.log(props.EXISTING_DASHBOARD)
     return diff;
 };
 
-
     // Watchers
     watch(
     () => dashboardDataForm.value,
@@ -77,18 +73,16 @@ console.log(props.EXISTING_DASHBOARD)
     };
         
     const handleViewDashboard = (): void => {
-        emit("prev", prevDashboard.value);
-    };
-        
+        preview.value = !preview.value;
+    };      
+    
     const handleDestroyDashboard = (): void => {
         console.log("Dashboard destroyed");
     };
 
-
-    
-
  </script>
  <template>
+    <PrevDashboard @close="handleViewDashboard" v-show="preview" :EXISTING_DASHBOARD="EXISTING_DASHBOARD"/>
     <div class="container__main">
         <p v-if="props.flag">Diligenciar todos los campos</p>
         <p v-if="!props.flag">Actualizar lo necesario</p>

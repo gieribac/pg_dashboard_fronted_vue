@@ -1,7 +1,7 @@
-<!-- 
-1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña. 
+<!--
+1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña.
 2. crear componente para cargar mapa con las obciones de actualizar y de eliminar, por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
-3. en adminv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo. 
+3. en adminv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
 4. crear logica de componente AdminV, administrador principal puede otorgar permisos y aliminar cualquier cuenta de administrador, administradoy comun solo puede eliminar su propia cuenta.
 
 -->
@@ -12,7 +12,6 @@ import { useRouter } from 'vue-router';
 import ChangePass from '../components/adminPop_up/ChangePass.vue';
 import DestroyUser from '../components/adminPop_up/DestroyUser.vue';
 import PatchUpdate from '../components/adminPop_up/PatchUpdate.vue';
-import PrevDashboard from '../components/adminPop_up/PrevDashboard.vue';
 import FormD from '../components/FormD.vue';
 import MenuComponent from '../components/MenuComponent.vue';
 import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
@@ -37,10 +36,6 @@ let statusPupupAlert: boolean = false;//true: good; false: error
 
 const dForm: boolean = true;//true is Form1, false is form2
 
-  const preview: Ref<Boolean> = ref(false);
-  const openPreview  = (m: boolean): void => {
-    preview.value = !preview.value;
-  }
   const fRegresar = (): void => {
     router.push({ name: 'MainV' });
   }
@@ -83,19 +78,18 @@ const triggerAlert = (status: boolean):void => {
 // Maneja el cierre de la alerta desde el hijo
 const handleClose = () => {
   showAlert.value = false;
-  
+
 };
 
 </script>
 <template>
   <div class="cont__main">
-    <h2 >Carga de dashboards</h2>      
+    <h2 >Carga de dashboards</h2>
     <FormD :flag="dForm" />
-    <h2>Edición de dashboards</h2>   
+    <h2>Edición de dashboards</h2>
     <FormD
       v-for="(post, index) in posts"
-      :key="index"
-      @prev="openPreview"
+      :key="index"      
       :flag="!dForm"
       :EXISTING_DASHBOARD="post"
     />
@@ -103,13 +97,11 @@ const handleClose = () => {
     <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" />
     <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
-    <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" /> 
+    <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" />
     <AlertPop_up v-if="showAlert" :gj="statusPupupAlert" @close="handleClose"/>
 
   </div>
-  
-  <PrevDashboard @pd="openPreview" v-show="preview"/>
-  
+
 </template>
 <style scoped>
 .cont__main {
@@ -144,5 +136,5 @@ const handleClose = () => {
   .cont__main h2 {
     width: 85.5%;
   }
-} 
+}
 </style>

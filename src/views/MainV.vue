@@ -2,7 +2,15 @@
 import MenuComponent from '../components/MenuComponent.vue';
 import regPopup from '../components/mainPop_up/regPopup.vue';
 import loginPopup from '../components/mainPop_up/loginPopup.vue';
-import { ref, Ref } from 'vue';
+import { ref, Ref, onMounted } from 'vue';
+import PostService from '../services/PostService';
+import DashboardMain from '../components/DashboardMain.vue';
+const service = new PostService();
+const posts = service.getPosts();
+onMounted(async () => {
+  await service.fetchAll();
+
+})
 
 const showRegisterPopup: Ref<boolean> = ref(false);
 const showLoginPopup: Ref<boolean> = ref(false);
@@ -41,19 +49,20 @@ const showInfo = (m: Boolean):void => {
 
 <template>
 <MenuComponent @in="login" @rg="register" @cl="closed" @cs="logOut" @info="showInfo"/>
-<!-- <iframe title="pa" src="https://app.powerbi.com/view?r=eyJrIjoiMDA3YjZlZmYtMmZhNC00Y2NmLTg1ZjktMjAwM2Y4MjNlYzZjIiwidCI6ImZjMDA1NDdhLTI0YmItNGU0Zi05ZDYxLTczZmNhNWViOWRmMyIsImMiOjR9" frameborder="0" allowFullScreen="true">
-</iframe> -->
+
  <!-- Formulario de registro (Pop-up) -->
  <regPopup @pd="closeRegister" v-if="showRegisterPopup" class="popup"/>
          <!-- Formulario de inicio de sesión (Pop-up) -->
   <loginPopup @pd="closeLogin" v-if="showLoginPopup" class="popup"/>
+  <DashboardMain
+      v-for="(post, index) in posts"
+      :key="index"   
+      :EXISTING_DASHBOARD="post"
+    />
+
 </template>
 <style scoped>
 
-iframe {
-        height: 90vh;
-        width: 100%;      
-    };
 .popup {
   position: fixed;
   top: 50%;

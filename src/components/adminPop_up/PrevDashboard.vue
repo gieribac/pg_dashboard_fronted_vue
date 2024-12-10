@@ -1,34 +1,55 @@
 <script setup lang="ts">
-import { ref, Ref, defineEmits } from 'vue';
+import { ref, Ref, defineEmits, withDefaults, defineProps } from 'vue';
+import Dashboard_Data from '../../interfaces/DashboardData';
+import { EMPTY_DASHBOARD } from '../../components/constantInfo/empty_dashboard';
 
-const emit = defineEmits(["pd"])
-const alClick = ():void => {
-    emit("pd", m.value)
-
+const props = withDefaults(
+  defineProps<{
+    EXISTING_DASHBOARD?: Dashboard_Data;
+  }>(),
+  {
+    EXISTING_DASHBOARD: () => EMPTY_DASHBOARD as Dashboard_Data, // Por defecto, el objeto es EMPTY_DASHBOARD
+  }
+);
+const emit = defineEmits(["close"])
+const alClickClose = () :void => {
+    emit("close", m.value)
 }
 let m:Ref<Boolean> = ref(false);
+const formatDate = (originalDate: string): string => {
+    const cleanedDate: string = originalDate.replace(/\.\d+Z$/, "Z");
+    const dateObject: Date = new Date(cleanedDate);
+    return `${dateObject.toLocaleDateString()} ${dateObject.toLocaleTimeString()}`;
+};
+
+const created: string = typeof(props.EXISTING_DASHBOARD.created_at) == "string" ? 
+    formatDate(props.EXISTING_DASHBOARD.created_at): "";
+const updated: string = typeof(props.EXISTING_DASHBOARD.updated_at) == "string" ? 
+    formatDate(props.EXISTING_DASHBOARD.updated_at): "";
+
 </script>
 
 <template>
     <div class="overlay">
     <div class="popup">
-        <h3 class="popup__h3">Previsualización        
+        <h3 class="popup__h3">{{props.EXISTING_DASHBOARD.title}}        
         </h3>
         <div class="button popup__btn">
-            <button class="btn" type="button" @click="alClick">
+            <button class="btn" type="button" @click="alClickClose">
                 <span class="material-symbols-outlined">close</span>Cerrar
             </button>
         </div>
         <div class="popup__dash">
-            <iframe title="pa" src="https://app.powerbi.com/view?r=eyJrIjoiMDA3YjZlZmYtMmZhNC00Y2NmLTg1ZjktMjAwM2Y4MjNlYzZjIiwidCI6ImZjMDA1NDdhLTI0YmItNGU0Zi05ZDYxLTczZmNhNWViOWRmMyIsImMiOjR9" frameborder="0" allowFullScreen="true">
+            <iframe title="pa" :src="props.EXISTING_DASHBOARD.urlDashboard" frameborder="0" allowFullScreen="true">
             </iframe> 
+
         </div>
-        <p class="info-s info popup__title"><strong class="strong-s">Título:</strong><input disabled="true" type="text" class="text-s" value=" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, aspernatur nisi. Aperiam optio odit modi quo. Officiis magnam odit possimus? Reiciendis dolorem laboriosam ullam pariatur! Molestiae error tempora fuga eos!" > </p>
-        <p class="info popup__observaciones"><strong>Observaciones:</strong>  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni, eaque vitae ducimus ea quam aperiam et! Officia aspernatur iste eum maiores ducimus inventore doloremque veritatis? Accusantium dolores dignissimos. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magni, eaque vitae ducimus ea quam aperiam et! Officia aspernatur iste eum maiores ducimus inventore doloremque veritatis? Accusantium dolores dignissimos </p>
-        <div class="info popup__lugar"><strong class="strong-s">Lugar: </strong><input disabled="true" type="text" class="text-s" value=" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, aspernatur nisi. Aperiam optio odit modi quo. Officiis magnam odit possimus? Reiciendis dolorem laboriosam ullam pariatur! Molestiae error tempora fuga eos!" ></div>
-        <p class="info popup__autor"><strong class="strong-s">Autor:</strong><input disabled="true" type="text" class="text-s" value=" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, aspernatur nisi. Aperiam optio odit modi quo. Officiis magnam odit possimus? Reiciendis dolorem laboriosam ullam pariatur! Molestiae error tempora fuga eos!" > </p>
-        <p class="info popup__creado"><strong class="strong-s">Creado:</strong><input disabled="true" type="text" class="text-s" value=" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, aspernatur nisi. Aperiam optio odit modi quo. Officiis magnam odit possimus? Reiciendis dolorem laboriosam ullam pariatur! Molestiae error tempora fuga eos!" > </p>    
-        <p class="info popup__modificado"><strong class="strong-s">Modificado:</strong><input disabled="true" type="text" class="text-s" value=" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error, aspernatur nisi. Aperiam optio odit modi quo. Officiis magnam odit possimus? Reiciendis dolorem laboriosam ullam pariatur! Molestiae error tempora fuga eos!" ></p> 
+        <p class="info-s info popup__title"><strong class="strong-s">Título: </strong>{{props.EXISTING_DASHBOARD.title}}</p>
+        <p class="info popup__observaciones"><strong>Observaciones: </strong> {{props.EXISTING_DASHBOARD.description}} </p>
+        <p class="info info-s popup__lugar"><strong class="strong-s">Lugar: </strong>{{props.EXISTING_DASHBOARD.place}}</p>
+        <p class="info info-s popup__autor"><strong class="strong-s">Autor: </strong>{{props.EXISTING_DASHBOARD.author}}</p>
+        <p class="info info-s popup__creado"><strong class="strong-s">Creado: </strong>{{created}}</p>    
+        <p class="info info-s popup__modificado"><strong class="strong-s">Modificado: </strong>{{updated}}</p> 
     </div>
     </div>
 </template>
@@ -112,10 +133,10 @@ let m:Ref<Boolean> = ref(false);
 }
 
 iframe {
-    width: 100%;
     height: 70vh;
     border-radius: 10px;
     margin: auto;
+    aspect-ratio: 16/9;
 }
 
 .info{
@@ -126,7 +147,7 @@ iframe {
     line-height: 1;
 }
 .info > .strong-s {
-    width: 80px;
+    width: 85px;
     display: inline-block;
 }
 .info-s {
@@ -135,21 +156,6 @@ iframe {
     align-self: flex-end;
 }
 
-.text-s{
-    width: 75%;
-    overflow-x: auto;
-    height: 16px;
-    border: none;
-    background: transparent; 
-    outline: none; 
-    color: inherit;
-    font: inherit;
-    padding: 0; 
-    margin: 0;
-    cursor: text;
-    position: relative;
-    top: 2px;
-}
 @media (max-width: 768px) {
     iframe {
         height: 50vh;
