@@ -1,11 +1,10 @@
 <script setup lang='ts'>
 import { defineEmits, ref, Ref } from 'vue';
-import { required, minLength, maxLength,  alphaNum } from '@vuelidate/validators';
-import AdminLoginData from '../interfaces/AdminLoginData';
 import { useVuelidate } from '@vuelidate/core';
+import { required, minLength, maxLength,  alphaNum } from '@vuelidate/validators';
+import AdminLoginData from '../../interfaces/AdminLoginData';
+import AuthService from '../../services/AuthService';
 // objetos con las reglas de validación
-
-
 const rulesLoginData = {
   username: {
     required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
@@ -21,9 +20,16 @@ const loginForm = ref<AdminLoginData>({ username: '', password: '' });
  const v_login$ = useVuelidate(rulesLoginData, loginForm);
 // Métodos de envío
 
-const submitLogin = ():void => {
+const submitLogin = async () => {
   // Manejar el envío del formulario de inicio de sesión aquí
   console.log('Datos de inicio de sesión:', JSON.stringify(loginForm.value));
+  const auth = new AuthService();
+  const success = await auth.login(loginForm.value);
+  if (success) {
+    console.log('exito');
+  } else {
+    console.log('fracaso en login');
+  }
   emit("pd", m.value);
 };
 

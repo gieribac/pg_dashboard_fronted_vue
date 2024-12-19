@@ -60,18 +60,18 @@ const toggleDropdown = (): void => {
     </button>
     <ul v-if="isOpen && menu" class="dropdown-content">
       <li @click="alClick(0)">
-        <p v-show="showParagraph[0]">Registrarse</p>
+        <p v-show="showParagraph[0]">Ingresar</p>
         <div class="li_container" @mouseenter="handleMouseEnter(0)" @mouseleave="handleMouseLeave(0)" >
           <span class="material-symbols-outlined">
-          app_registration
+            login
           </span>
         </div>       
       </li>
       <li @click="alClick(1)">
-        <p v-show="showParagraph[1]">Ingresar</p>
+        <p v-show="showParagraph[1]">Registrarse</p>
         <div class="li_container" @mouseenter="handleMouseEnter(1)" @mouseleave="handleMouseLeave(1)">
           <span class="material-symbols-outlined">
-          login
+            app_registration
           </span>
         </div>
       </li>
