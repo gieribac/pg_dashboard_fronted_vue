@@ -5,6 +5,22 @@ import loginPopup from '../components/mainPop_up/loginPopup.vue';
 import { ref, Ref, onMounted } from 'vue';
 import PostService from '../services/PostService';
 import DashboardMain from '../components/DashboardMain.vue';
+import AlertPop_up from '../components/AlertPop_up.vue';
+import ShortMessageAP from '../interfaces/ShortMessageAP';
+import SMClass from '../class/SMClass';
+const sm = new SMClass();
+const showAlert: Ref<boolean> = ref(false);
+const handleClose = () => {
+  showAlert.value = false;
+};
+
+// Función para montar la alerta
+const triggerAlertlogin = (sm_: ShortMessageAP):void => {
+  showAlert.value = true;
+  sm.status = sm_.status;
+  sm.message = sm_.message;
+};
+
 const service = new PostService();
 const posts = service.getPosts();
 onMounted(async () => {
@@ -53,12 +69,13 @@ const showInfo = (m: Boolean):void => {
  <!-- Formulario de registro (Pop-up) -->
  <regPopup @pd="closeRegister" v-if="showRegisterPopup" class="popup"/>
          <!-- Formulario de inicio de sesión (Pop-up) -->
-  <loginPopup @pd="closeLogin" v-if="showLoginPopup" class="popup"/>
+  <loginPopup @pd="closeLogin" @sm_="triggerAlertlogin" v-show="showLoginPopup" class="popup"/>
   <DashboardMain
       v-for="(post, index) in posts"
       :key="index"   
       :EXISTING_DASHBOARD="post"
     />
+  <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
 
 </template>
 <style scoped>

@@ -17,9 +17,9 @@ const formatDate = (originalDate: string): string => {
     return `${dateObject.toLocaleDateString()} ${dateObject.toLocaleTimeString()}`;
 };
 
-const created: string = typeof(props.EXISTING_DASHBOARD.created_at) == "string" ? 
+const created: string = typeof(props.EXISTING_DASHBOARD.created_at) === "string" ? 
     formatDate(props.EXISTING_DASHBOARD.created_at): "";
-const updated: string = typeof(props.EXISTING_DASHBOARD.updated_at) == "string" ? 
+const updated: string = typeof(props.EXISTING_DASHBOARD.updated_at) === "string" ? 
     formatDate(props.EXISTING_DASHBOARD.updated_at): "";
 
 </script>

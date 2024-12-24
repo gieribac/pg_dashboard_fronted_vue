@@ -1,11 +1,3 @@
-<!--
-1. crear poppup para cambiar contraseñam y  para eliminar usuario pidiendo contraseña.
-2. crear componente para cargar mapa con las obciones de actualizar y de eliminar, por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
-3. en adminv crear obcion de informacon y componente carga de dashbard con su informacion adicional. por defecto el dashboard asociado no es visibles pero se añade una obcion para verlo.
-4. crear logica de componente AdminV, administrador principal puede otorgar permisos y aliminar cualquier cuenta de administrador, administradoy comun solo puede eliminar su propia cuenta.
-
--->
-
 <script setup lang="ts">
 import { ref, Ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -16,12 +8,12 @@ import FormD from '../components/FormD.vue';
 import MenuComponent from '../components/MenuComponent.vue';
 import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
 import AlertPop_up from '../components/AlertPop_up.vue';
+import SMClass from '../class/SMClass';
 import PostService from '../services/PostService';
 const service = new PostService();
 const posts = service.getPosts();
 onMounted(async () => {
   await service.fetchAll();
-
 })
 //consts
 // Crear referencia al router
@@ -32,7 +24,7 @@ const patchUpdatePopup1: Ref<boolean> = ref(false);
 const passChangePopup1: Ref<boolean> = ref(false);
 const statusOA: Ref<boolean> = ref(false);
 const otorgarAutorizacion: boolean = true;
-let statusPupupAlert: boolean = false;//true: good; false: error
+const sm = new SMClass();
 
 const dForm: boolean = true;//true is Form1, false is form2
 
@@ -69,16 +61,16 @@ const dForm: boolean = true;//true is Form1, false is form2
   }
 const showAlert: Ref<boolean> = ref(false);
 
-// Función para montar la alerta
-const triggerAlert = (status: boolean):void => {
-    showAlert.value = true;
-    statusPupupAlert = status;
+// // Función para montar la alerta
+const triggerAlert = (status_: boolean, message_: string):void => {
+  showAlert.value = true;
+  sm.status = status_;
+  sm.message = message_;
 };
-// triggerAlert(false)
+triggerAlert(true, "exito");
 // Maneja el cierre de la alerta desde el hijo
 const handleClose = () => {
   showAlert.value = false;
-
 };
 
 </script>
@@ -98,7 +90,7 @@ const handleClose = () => {
     <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" />
-    <AlertPop_up v-if="showAlert" :gj="statusPupupAlert" @close="handleClose"/>
+    <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
 
   </div>
 

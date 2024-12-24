@@ -4,6 +4,19 @@ import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength,  alphaNum } from '@vuelidate/validators';
 import AdminLoginData from '../../interfaces/AdminLoginData';
 import AuthService from '../../services/AuthService';
+import SMClass from '../../class/SMClass';
+const sm = new SMClass();
+const showAlert: Ref<boolean> = ref(false);
+const handleClose = () => {
+  showAlert.value = false;
+};
+// Función para montar la alerta
+// const triggerAlert = (status_: boolean, message: string):void => {
+//   showAlert.value = true;
+//   sm.status = status_;
+//   sm.message = message;
+// };
+
 // objetos con las reglas de validación
 const rulesLoginData = {
   username: {
@@ -22,23 +35,33 @@ const loginForm = ref<AdminLoginData>({ username: '', password: '' });
 
 const submitLogin = async () => {
   // Manejar el envío del formulario de inicio de sesión aquí
-  console.log('Datos de inicio de sesión:', JSON.stringify(loginForm.value));
-  const auth = new AuthService();
-  const success = await auth.login(loginForm.value);
-  if (success) {
-    console.log('exito');
-  } else {
-    console.log('fracaso en login');
+  const copyloginForm = {...loginForm.value};
+  loginForm.value = { username: '', password: '' };
+  emit("pd", m);
+  console.log('Datos de inicio de sesión:', JSON.stringify(copyloginForm));  
+  try {
+    const auth = new AuthService();
+    const success = await auth.login(copyloginForm);
+    console.log(success)
+    sm.status = success;
+    if (success) {
+      sm.message = 'Sesión iniciada';
+    } else {
+      sm.message = 'Error en login';
+    }
+  } catch (e) {
+      sm.message = 'Error en login';
   }
-  emit("pd", m.value);
+  emit("sm_", sm);
 };
 
-const emit = defineEmits(["pd"])
+const emit = defineEmits(["pd","sm_"])
 const alClick = ():void => {
-    emit("pd", m.value);
-
+  emit("pd", m);
 }
 let m:Ref<Boolean> = ref(false);
+
+
 </script>
 
 <template>

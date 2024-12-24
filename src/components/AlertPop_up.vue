@@ -1,48 +1,64 @@
-
-  
-  <script setup lang="ts">
-  import { ref, Ref, onMounted, onUnmounted, defineEmits, defineProps } from 'vue';
-  
-  // Reactive state for the visibility of the alert
-  const visible = ref(true);
- 
-  const  status: Ref<boolean> = ref(false);
-  const msj: string="error en la carga";
-
- 
-const emit = defineEmits(['close']);
-
-// Cierre manual
-const closeAlert = () => {
-  emit('close',true);
+<!--
+Forma de uso
+import ShortMessageAP from '../interfaces/ShortMessageAP';
+import AlertPop_up from '../components/AlertPop_up.vue';
+import SMClass from '../../class/SMClass';
+const sm = new SMClass();
+const showAlert: Ref<boolean> = ref(false);
+const handleClose = () => {
+  showAlert.value = false;
 };
 
-// Cierre automático
-let timeoutId: ReturnType<typeof setTimeout>;
+// Función para montar la alerta
+const triggerAlert = (status_: boolean, message_: string):void => {
+  showAlert.value = true;
+  sm.status = status_;
+  sm.message = message_;
+};
+triggerAlert(true, "exito");
 
-onMounted(() => {
-  timeoutId = setTimeout(closeAlert, 3000);
-});
+<AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
+-->
+<script setup lang="ts">
+  import { ref, onMounted, onUnmounted, defineEmits, defineProps, PropType } from 'vue';
+  import ShortMessageAP from '../interfaces/ShortMessageAP';
+  
 
-onUnmounted(() => {
-  clearTimeout(timeoutId);
-});
+  // Reactive state for the visibility of the alert
+  const visible = ref(true);
 
-const prop = defineProps({
-      gj: {
-        type: Boolean,
-        required: true
+  const emit = defineEmits(['close']);
+
+  // Cierre manual
+  const closeAlert = () => {
+    emit('close', true);
+  };
+
+  // Cierre automático
+  let timeoutId: ReturnType<typeof setTimeout>;
+
+  onMounted(() => {
+    timeoutId = setTimeout(closeAlert, 2000);
+  });
+
+  onUnmounted(() => {
+    clearTimeout(timeoutId);
+  });
+
+  const prop = defineProps({
+    shortMessage: {
+      type:  Object as PropType<ShortMessageAP>,
+      required: true
     }
-})
+  })
 
-  </script>
+</script>
   <template>
     <div class="overlay" v-if="visible">
     <div class="alert">
       <div class="alert__content">
-        <span class="alert__icon material-symbols-outlined" :class="prop.gj ? 'check_circle': 'error'">{{prop.gj ? "check_circle": "error"}}</span>
-        <p class="alert__message">{{prop.gj ? "¡ok!": "¡error!"}}</p>
-        <p class="code">{{prop.gj ? "": `Msj: ${msj}`}} </p>
+        <span class="alert__icon material-symbols-outlined" :class="prop.shortMessage.status ? 'check_circle': 'error'">{{prop.shortMessage.status ? "check_circle": "error"}}</span>
+        <p class="alert__message">{{prop.shortMessage.message}}</p>
         <button class="alert__button" @click="closeAlert">Aceptar</button>
         
       </div>
