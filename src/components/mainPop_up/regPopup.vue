@@ -1,13 +1,19 @@
 <script setup lang='ts'>
 import { defineEmits, Ref, ref } from 'vue';
-import { required, numeric, alpha, minLength, maxLength, email, alphaNum } from '@vuelidate/validators';
-import AdminRegData from '../interfaces/AdminRegData';
+import { required, numeric,  minLength, maxLength, email, alphaNum, helpers } from '@vuelidate/validators';
+import AdminRegData from '../../interfaces/AdminRegData';
 import { useVuelidate } from '@vuelidate/core';
 
 // objetos con las reglas de validación
+// Regla personalizada para aceptar letras y espacios
+const alphaSpaces = helpers.withMessage(
+  'El nombre solo puede contener letras y espacios',
+  (value: string) => /^[A-Za-z\s]+$/.test(value)
+);
+
 const rulesRegData = {
   name: {
-    required, alpha, minLength: minLength(5), maxLength: maxLength(30)
+    required, alphaSpaces, minLength: minLength(5), maxLength: maxLength(30)
   },
   no_doc: {
     required, numeric, minLength: minLength(6), maxLength: maxLength(12)
@@ -16,7 +22,7 @@ const rulesRegData = {
     required, email
   },
   username: {
-    required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
+    required, alphaNum, minLength: minLength(3), maxLength: maxLength(16)
   },
   password: {
     required,  minLength: minLength(6), maxLength: maxLength(10)
@@ -30,14 +36,14 @@ const v_reg$ = useVuelidate(rulesRegData, registerForm);
 
 const submitRegister = ():void => {
   // Manejar el envío del formulario de registro aquí
-  console.log('Datos de registro:', JSON.stringify(registerForm.value));
-  emit("pd", m.value);
+  // console.log('Datos de registro:', JSON.stringify(registerForm.value));
+  emit("rgd", registerForm.value);
+  emit("pd",m.value);
 };
 
-const emit = defineEmits(["pd"])
+const emit = defineEmits(["pd","rgd"])
 const alClick = ():void => {
     emit("pd", m.value);
-
 }
 let m:Ref<Boolean> = ref(false);
 </script>
@@ -112,6 +118,11 @@ let m:Ref<Boolean> = ref(false);
 .popup .button__container .accept {
   background-color: #090c9b;
   color: #fbfff1;
+}
+
+.popup .button__container .accept:disabled {
+  cursor: not-allowed; 
+  opacity: 0.6; 
 }
 
 .popup .button__container .accept:hover {

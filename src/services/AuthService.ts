@@ -53,3 +53,13 @@ export default class AuthService {
 //       "email": "drrvw@gmail.com"
 //     }
 //   } 
+
+// {
+    //     "name": "judaa",
+    //     "no_doc": "102184771",
+    //     "email": "yeicoafqw@gmail.com",
+    //     "username": "juraameloqwq",
+    //     "password": "drrb121e13",
+    //     "main": true
+    //   }
+    

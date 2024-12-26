@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { ref, Ref, onMounted } from 'vue';
 import MenuComponent from '../components/MenuComponent.vue';
 import regPopup from '../components/mainPop_up/regPopup.vue';
 import loginPopup from '../components/mainPop_up/loginPopup.vue';
-import { ref, Ref, onMounted } from 'vue';
 import PostService from '../services/PostService';
 import DashboardMain from '../components/DashboardMain.vue';
 import AlertPop_up from '../components/AlertPop_up.vue';
-import ShortMessageAP from '../interfaces/ShortMessageAP';
 import SMClass from '../class/SMClass';
+import AuthService from '../services/AuthService';
+import AdminLoginData from '../interfaces/AdminLoginData';
+import AdminRegData from '../interfaces/AdminRegData';
+import useRegisterService from '../services/RegisterService'
+
 const sm = new SMClass();
 const showAlert: Ref<boolean> = ref(false);
 const handleClose = () => {
@@ -15,10 +19,38 @@ const handleClose = () => {
 };
 
 // Función para montar la alerta
-const triggerAlertlogin = (sm_: ShortMessageAP):void => {
-  showAlert.value = true;
-  sm.status = sm_.status;
-  sm.message = sm_.message;
+const triggerAlertlogin = async (lg: AdminLoginData) => {
+  try {
+    const auth = new AuthService();
+    const success = await auth.login(lg);
+    showAlert.value = true;
+    sm.status = success;
+    console.log(success)
+    if (success) {
+      sm.message = 'Sesión iniciada';
+    } else {
+      sm.message = 'Error en login';
+    }
+  } catch (e) {
+      sm.message = 'Error en login';
+  }
+};
+
+const triggerAlertRg = async (rg: AdminRegData) => {
+  try {
+    const { registerUser, success } = useRegisterService();
+    await registerUser(rg);
+    showAlert.value = true;
+    sm.status = success.value;
+    if (success.value) {
+      sm.message = 'Registro exitoso';
+    } else {
+      sm.message = 'Registro fallido';
+    }
+  } catch (e) {
+    console.log(e);
+    sm.message = 'Registro fallido';
+  }
 };
 
 const service = new PostService();
@@ -64,12 +96,9 @@ const showInfo = (m: Boolean):void => {
 </script>
 
 <template>
-<MenuComponent @in="login" @rg="register" @cl="closed" @cs="logOut" @info="showInfo"/>
-
- <!-- Formulario de registro (Pop-up) -->
- <regPopup @pd="closeRegister" v-if="showRegisterPopup" class="popup"/>
-         <!-- Formulario de inicio de sesión (Pop-up) -->
-  <loginPopup @pd="closeLogin" @sm_="triggerAlertlogin" v-show="showLoginPopup" class="popup"/>
+  <MenuComponent @in="login" @rg="register" @cl="closed" @cs="logOut" @info="showInfo"/>
+  <regPopup @pd="closeRegister" @rgd="triggerAlertRg" v-if="showRegisterPopup" class="popup"/>
+  <loginPopup @pd="closeLogin" @lg="triggerAlertlogin" v-if="showLoginPopup" class="popup"/>
   <DashboardMain
       v-for="(post, index) in posts"
       :key="index"   

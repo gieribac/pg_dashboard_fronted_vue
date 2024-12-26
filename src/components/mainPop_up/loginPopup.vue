@@ -3,24 +3,9 @@ import { defineEmits, ref, Ref } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength,  alphaNum } from '@vuelidate/validators';
 import AdminLoginData from '../../interfaces/AdminLoginData';
-import AuthService from '../../services/AuthService';
-import SMClass from '../../class/SMClass';
-const sm = new SMClass();
-const showAlert: Ref<boolean> = ref(false);
-const handleClose = () => {
-  showAlert.value = false;
-};
-// Función para montar la alerta
-// const triggerAlert = (status_: boolean, message: string):void => {
-//   showAlert.value = true;
-//   sm.status = status_;
-//   sm.message = message;
-// };
-
-// objetos con las reglas de validación
 const rulesLoginData = {
   username: {
-    required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
+    required, alphaNum, minLength: minLength(3), maxLength: maxLength(16)
   },
   password: {
     required,  minLength: minLength(6), maxLength: maxLength(10)
@@ -33,35 +18,18 @@ const loginForm = ref<AdminLoginData>({ username: '', password: '' });
  const v_login$ = useVuelidate(rulesLoginData, loginForm);
 // Métodos de envío
 
-const submitLogin = async () => {
+const submitLogin = () :void => {
   // Manejar el envío del formulario de inicio de sesión aquí
-  const copyloginForm = {...loginForm.value};
-  loginForm.value = { username: '', password: '' };
   emit("pd", m);
-  console.log('Datos de inicio de sesión:', JSON.stringify(copyloginForm));  
-  try {
-    const auth = new AuthService();
-    const success = await auth.login(copyloginForm);
-    console.log(success)
-    sm.status = success;
-    if (success) {
-      sm.message = 'Sesión iniciada';
-    } else {
-      sm.message = 'Error en login';
-    }
-  } catch (e) {
-      sm.message = 'Error en login';
-  }
-  emit("sm_", sm);
+  console.log('Datos de inicio de sesión:', JSON.stringify(loginForm.value)); 
+  emit("lg", loginForm.value);
 };
 
-const emit = defineEmits(["pd","sm_"])
+const emit = defineEmits(["pd","lg"])
 const alClick = ():void => {
   emit("pd", m);
 }
 let m:Ref<Boolean> = ref(false);
-
-
 </script>
 
 <template>
@@ -131,6 +99,10 @@ let m:Ref<Boolean> = ref(false);
 .popup .button__container .accept {
   background-color: #090c9b;
   color: #fbfff1;
+}
+.popup .button__container .accept:disabled {
+  cursor: not-allowed; 
+  opacity: 0.6; 
 }
 
 .popup .button__container .accept:hover {
