@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { listEmmits } from '../components/constantInfo/listEmmits';
-import { defineEmits, defineProps, ref, Ref} from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import AlertPop_up from '../components/AlertPop_up.vue';
-import SMClass from '../class/SMClass';
-import AuthService from '../services/AuthService';
-const sm = new SMClass();
-const showAlert: Ref<boolean> = ref(false);
-let flagLogoutToMainV = false;
-let flagLoginToAdminV = false;
-const router = useRouter();
-const handleClose = () => {
-  showAlert.value = false;
-  if (flagLogoutToMainV){
-    router.push({ name: 'MainV' });
-    return
-  }
-  if (flagLoginToAdminV){
-    router.push({ name: 'AdminV'});
-    return
-  }
-};
+  import { listEmmits } from '../components/constantInfo/listEmmits';
+  import { defineEmits, defineProps, ref, Ref} from 'vue';
+  import { useRouter, useRoute } from 'vue-router';
+  import AlertPop_up from '../components/AlertPop_up.vue';
+  import SMClass from '../class/SMClass';
+  import AuthService from '../services/AuthService';
+  const sm = new SMClass();
+  const showAlert: Ref<boolean> = ref(false);
+  let flagLogoutToMainV = false;
+  let flagLoginToAdminV = false;
+  const router = useRouter();
+  const handleClose = () => {
+    showAlert.value = false;
+    if (flagLogoutToMainV){
+      router.push({ name: 'MainV' });
+      return
+    }
+    if (flagLoginToAdminV){
+      router.push({ name: 'AdminV'});
+      return
+    }
+  };
 
-// Función para montar la alerta
-const triggerAlert = (status_: boolean, message_: string):void => {
-  showAlert.value = true;
-  sm.status = status_;
-  sm.message = message_;
-};
+  // Función para montar la alerta
+  const triggerAlert = (status_: boolean, message_: string):void => {
+    showAlert.value = true;
+    sm.status = status_;
+    sm.message = message_;
+  };
 
   const logOut = async () => {
     try {
@@ -53,43 +53,43 @@ const triggerAlert = (status_: boolean, message_: string):void => {
     }
   });
 
-//estado para version del menu
-const menu: Boolean = useRoute().name ==='MainV';
-//estados reactivos para controlar la visibilidad de parrafos del menu
-const showParagraph = ref(Array(9).fill(false));
+  //estado para version del menu
+  const menu: Boolean = useRoute().name ==='MainV';
+  //estados reactivos para controlar la visibilidad de parrafos del menu
+  const showParagraph = ref(Array(9).fill(false));
 
-// metodos para renderizar letreros de menu
+  // metodos para renderizar letreros de menu
 
-const handleMouseEnter = (num: number):void => {
-  showParagraph.value[num] = true;
-}
-
-const handleMouseLeave = (num: number):void => {
-  showParagraph.value[num] = false;
-}
-
-//emits
-
-const emit = defineEmits(listEmmits);
-
-// Estados reactivos para los valores de los emmits
-const m = ref(Array(9).fill(false));
-
-//estado reactivo del toggle
-const isOpen: Ref<boolean> = ref(false);
-
-// Función para emitir emmits
-const alClick = (num: number): void => {
-  emit(listEmmits[num], m.value[num])
-};
-
-// Función para manejar el toggle y emitir "cl"
-const toggleDropdown = (): void => {
-  isOpen.value = !isOpen.value;
-  if (!isOpen.value) {
-    emit(listEmmits[2], m.value[2]);
+  const handleMouseEnter = (num: number):void => {
+    showParagraph.value[num] = true;
   }
-};
+
+  const handleMouseLeave = (num: number):void => {
+    showParagraph.value[num] = false;
+  }
+
+  //emits
+
+  const emit = defineEmits(listEmmits);
+
+  // Estados reactivos para los valores de los emmits
+  const m = ref(Array(9).fill(false));
+
+  //estado reactivo del toggle
+  const isOpen: Ref<boolean> = ref(false);
+
+  // Función para emitir emmits
+  const alClick = (num: number): void => {
+    emit(listEmmits[num], m.value[num])
+  };
+
+  // Función para manejar el toggle y emitir "cl"
+  const toggleDropdown = (): void => {
+    isOpen.value = !isOpen.value;
+    if (!isOpen.value) {
+      emit(listEmmits[2], m.value[2]);
+    }
+  };
 
 </script>
 
