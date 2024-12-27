@@ -1,8 +1,7 @@
 export const listEmmits: string[] = [
     "in", 
     "rg", 
-    "cl", 
-    "cs", 
+    "cl",
     "info", 
     "eRegresar", 
     "eChange", 

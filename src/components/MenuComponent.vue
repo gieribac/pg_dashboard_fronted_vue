@@ -1,20 +1,62 @@
 <script setup lang="ts">
 import { listEmmits } from '../components/constantInfo/listEmmits';
-import { defineEmits, defineProps, ref, Ref } from 'vue';
-import { useRoute } from "vue-router";
+import { defineEmits, defineProps, ref, Ref} from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import AlertPop_up from '../components/AlertPop_up.vue';
+import SMClass from '../class/SMClass';
+import AuthService from '../services/AuthService';
+const sm = new SMClass();
+const showAlert: Ref<boolean> = ref(false);
+let flagLogoutToMainV = false;
+let flagLoginToAdminV = false;
+const router = useRouter();
+const handleClose = () => {
+  showAlert.value = false;
+  if (flagLogoutToMainV){
+    router.push({ name: 'MainV' });
+    return
+  }
+  if (flagLoginToAdminV){
+    router.push({ name: 'AdminV'});
+    return
+  }
+};
+
+// Función para montar la alerta
+const triggerAlert = (status_: boolean, message_: string):void => {
+  showAlert.value = true;
+  sm.status = status_;
+  sm.message = message_;
+};
+
+  const logOut = async () => {
+    try {
+      const auth = new AuthService();
+      const exito = await auth.logout();
+      console.log('logout: '+exito)
+      if (exito) {
+        flagLogoutToMainV = true;
+        triggerAlert(true, "Sesión cerrada");
+      } else {
+        triggerAlert(false, "Fallo cerrando sesión");
+      }
+    } catch (e) {
+      triggerAlert(false, "Fallo cerrando sesión");
+    }
+  }
 
   // Props
   const prop = defineProps({
-  adminMain: {
-      type: Boolean,
-      default: false, // true = adminMain. false  = anyAdmin
-  }, 
+    adminMain: {
+        type: Boolean,
+        default: false, // true = adminMain. false  = anyAdmin
+    }
   });
 
 //estado para version del menu
-const menu: Boolean = useRoute().name=='MainV';
+const menu: Boolean = useRoute().name ==='MainV';
 //estados reactivos para controlar la visibilidad de parrafos del menu
-const showParagraph = ref(Array(10).fill(false));
+const showParagraph = ref(Array(9).fill(false));
 
 // metodos para renderizar letreros de menu
 
@@ -31,14 +73,14 @@ const handleMouseLeave = (num: number):void => {
 const emit = defineEmits(listEmmits);
 
 // Estados reactivos para los valores de los emmits
-const m = ref(Array(10).fill(false));
+const m = ref(Array(9).fill(false));
 
 //estado reactivo del toggle
 const isOpen: Ref<boolean> = ref(false);
 
 // Función para emitir emmits
 const alClick = (num: number): void => {
-  emit(listEmmits[num], m.value[num]);
+  emit(listEmmits[num], m.value[num])
 };
 
 // Función para manejar el toggle y emitir "cl"
@@ -75,7 +117,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>
       </li>
-      <li @click="alClick(3)">
+      <li @click="logOut()">
         <p v-show="showParagraph[3]">Cerrar Sesion</p>
         <div class="li_container" @mouseenter="handleMouseEnter(3)" @mouseleave="handleMouseLeave(3)">
           <span class="material-symbols-outlined">
@@ -83,7 +125,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>
       </li>
-      <li @click="alClick(4)">
+      <li @click="alClick(3)">
         <p v-show="showParagraph[4]">Información</p>
         <div class="li_container" @mouseenter="handleMouseEnter(4)" @mouseleave="handleMouseLeave(4)">
           <span class="material-symbols-outlined">
@@ -93,7 +135,7 @@ const toggleDropdown = (): void => {
       </li>
     </ul>
     <ul v-if="isOpen && !menu" class="dropdown-content">
-      <li @click="alClick(5)">
+      <li @click="alClick(4)">
         <p v-show="showParagraph[5]">Regresar a inicio</p>
         <div class="li_container" @mouseenter="handleMouseEnter(5)" @mouseleave="handleMouseLeave(5)" >
           <span class="material-symbols-outlined">
@@ -101,7 +143,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>       
       </li>
-      <li @click="alClick(6)">
+      <li @click="alClick(5)">
         <p v-show="showParagraph[6]">Cambiar contraseña</p>
         <div class="li_container" @mouseenter="handleMouseEnter(6)" @mouseleave="handleMouseLeave(6)">
           <span class="material-symbols-outlined">
@@ -109,7 +151,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>
       </li>
-      <li @click="alClick(7)">
+      <li @click="alClick(6)">
         <p v-show="showParagraph[7]">Actualizar registro</p>
         <div class="li_container" @mouseenter="handleMouseEnter(7)" @mouseleave="handleMouseLeave(7)">
           <span class="material-symbols-outlined">
@@ -117,7 +159,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>
       </li>
-      <li @click="alClick(8)">
+      <li @click="alClick(7)">
         <p v-show="showParagraph[8]">Eliminar cuenta</p>
         <div class="li_container" @mouseenter="handleMouseEnter(8)" @mouseleave="handleMouseLeave(8)">
           <span class="material-symbols-outlined">
@@ -133,7 +175,7 @@ const toggleDropdown = (): void => {
           </span>
         </div>
       </li>
-      <li @click="alClick(10)">
+      <li @click="logOut()">
         <p v-show="showParagraph[10]">Cerrar sesión</p>
         <div class="li_container" @mouseenter="handleMouseEnter(10)" @mouseleave="handleMouseLeave(10)">
           <span class="material-symbols-outlined">
@@ -143,7 +185,7 @@ const toggleDropdown = (): void => {
       </li>
     </ul>
   </div>
- 
+  <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
       
 </template>
 

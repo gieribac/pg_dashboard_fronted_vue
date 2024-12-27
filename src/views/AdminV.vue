@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, Ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import router from '../router';
 import ChangePass from '../components/adminPop_up/ChangePass.vue';
 import DestroyUser from '../components/adminPop_up/DestroyUser.vue';
 import PatchUpdate from '../components/adminPop_up/PatchUpdate.vue';
@@ -16,9 +16,6 @@ onMounted(async () => {
   await service.fetchAll();
 })
 //consts
-// Crear referencia al router
-const router = useRouter();
-
 const destroyUserPopup1: Ref<boolean> = ref(false);
 const patchUpdatePopup1: Ref<boolean> = ref(false);
 const passChangePopup1: Ref<boolean> = ref(false);
@@ -55,10 +52,6 @@ const dForm: boolean = true;//true is Form1, false is form2
     patchUpdatePopup1.value = false;
     passChangePopup1.value = false;
   }
-  const fLogout = (): void => {
-    alert('cerrar sesión');
-    router.push({ name: 'MainV' });
-  }
 const showAlert: Ref<boolean> = ref(false);
 
 // // Función para montar la alerta
@@ -67,7 +60,6 @@ const triggerAlert = (status_: boolean, message_: string):void => {
   sm.status = status_;
   sm.message = message_;
 };
-triggerAlert(true, "exito");
 // Maneja el cierre de la alerta desde el hijo
 const handleClose = () => {
   showAlert.value = false;
@@ -89,7 +81,7 @@ const handleClose = () => {
     <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" />
     <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
-    <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar" @eLogout="fLogout" />
+    <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>
     <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
 
   </div>

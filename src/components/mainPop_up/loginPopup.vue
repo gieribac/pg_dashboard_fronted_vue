@@ -21,7 +21,6 @@ const loginForm = ref<AdminLoginData>({ username: '', password: '' });
 const submitLogin = () :void => {
   // Manejar el envío del formulario de inicio de sesión aquí
   emit("pd", m);
-  console.log('Datos de inicio de sesión:', JSON.stringify(loginForm.value)); 
   emit("lg", loginForm.value);
 };
 

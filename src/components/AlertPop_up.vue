@@ -30,8 +30,8 @@ triggerAlert(true, "exito");
   const emit = defineEmits(['close']);
 
   // Cierre manual
-  const closeAlert = () => {
-    emit('close', true);
+  const closeAlert = () => {//0-> solo cerrar, main-> cerrar y redirigir a MainV, admin -> redirigir a AdminV
+    emit('close',true);
   };
 
   // Cierre automático
