@@ -10,6 +10,3 @@ export default interface Dashboard_Data {
     updated_at?: string
 }
 
-//ajustar modelo en la api rest
-//crear modelo de administrador
-

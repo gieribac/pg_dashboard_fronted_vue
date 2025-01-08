@@ -8,6 +8,8 @@
   import MenuComponent from '../components/MenuComponent.vue';
   import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
   import AlertPop_up from '../components/AlertPop_up.vue';
+  import { getDecodedToken } from '../services/authHelpers';
+  import Dashboard_Data from '../interfaces/DashboardData';
   import SMClass from '../class/SMClass';
   import PostService from '../services/PostService';
   const service = new PostService();
@@ -19,8 +21,15 @@
   const destroyUserPopup1: Ref<boolean> = ref(false);
   const patchUpdatePopup1: Ref<boolean> = ref(false);
   const passChangePopup1: Ref<boolean> = ref(false);
+  const showAlert: Ref<boolean> = ref(false);
   const statusOA: Ref<boolean> = ref(false);
-  const otorgarAutorizacion: boolean = true;
+  let otorgarAutorizacion: boolean = false;
+  const decoded = getDecodedToken();
+
+  if (decoded !== null) {
+    otorgarAutorizacion = decoded.main === 1; 
+  }
+
   const sm = new SMClass();
 
   const dForm: boolean = true;//true is Form1, false is form2
@@ -52,7 +61,6 @@
     patchUpdatePopup1.value = false;
     passChangePopup1.value = false;
   }
-  const showAlert: Ref<boolean> = ref(false);
 
   // // Función para montar la alerta
   const triggerAlert = (status_: boolean, message_: string):void => {
@@ -64,18 +72,65 @@
   const handleClose = () => {
     showAlert.value = false;
   };
+  const updateDash = async (id: number, data: Dashboard_Data): Promise<void> => {
+    try {
+      const success = await service.updatePost(id, data); 
+      showAlert.value = true;
+      if (success) {
+          triggerAlert(true,'Dashboard Actualizado');
+          return
+      } else {
+          triggerAlert(false,'Actualizanción fallida');
+      }
+    } catch (e) {
+      console.log('Error actualizando: ',e);
+      triggerAlert(false,'Error actualizando');
+    }
+  }
+  const destroyDash = async (id: number): Promise<void> => {
+    try {
+      const success = await service.deletePost(id); 
+      showAlert.value = true;
+      if (success) {
+        triggerAlert(true,'Dashboard Eliminado');
+        return
+      } else {
+        triggerAlert(false,'Fallido: eliminar');
+      }
+    } catch (e) {
+      console.log('Error al eliminar: ',e);
+      triggerAlert(false,'Error al eliminar');
+    }
+  }
+  const sendDash = async (data: Dashboard_Data): Promise<void> => {    
+    try {
+      const success = await service.createPost(data);
+      showAlert.value = true;
+      if (success) {
+        triggerAlert(true,'Dashboard Cargado');
+        return
+      } else {
+        triggerAlert(false,'Fallido: Cargar Dashboard');
+      }
+    } catch (e) {
+      console.log('Error al Cargar Dashboard: ',e);
+      triggerAlert(false,'Error al Cargar');
+    }
+  }
 
 </script>
 <template>
   <div class="cont__main">
     <h2 >Carga de dashboards</h2>
-    <FormD :flag="dForm" />
+    <FormD :flag="dForm" @sendDash="sendDash"/>
     <h2>Edición de dashboards</h2>
     <FormD
       v-for="(post, index) in posts"
       :key="index"      
       :flag="!dForm"
       :EXISTING_DASHBOARD="post"
+      @sendDash="updateDash"
+      @deleteDash="destroyDash"
     />
     <ChangePass @click="fChange" v-if="passChangePopup1" />
     <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" />

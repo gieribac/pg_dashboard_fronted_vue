@@ -35,7 +35,7 @@ let m:Ref<Boolean> = ref(false);
   <div class="popup">
       <h3>Iniciar Sesión</h3>
       <form @submit.prevent="submitLogin">
-        <input type="text" placeholder="Usuario" v-model="loginForm.username"  />
+        <input type="text" placeholder="Username" v-model="loginForm.username"  />
         <input type="password" placeholder="Contraseña" v-model="loginForm.password" required />
         <div class="button__container">
           <button class="accept" type="submit" :disabled="v_login$.$invalid">Aceptar</button>

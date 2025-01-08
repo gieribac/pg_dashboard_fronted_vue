@@ -61,12 +61,12 @@ const activeTab:Ref<Boolean> = ref(false);
         <div class="popup"> 
     <!-- Contenedor de pestañas -->
     <div class="popup__tabs">
-        <div class="popup__tab" :class="{active: activeTab}" @click="activeTab=!activeTab">Autorizar</div>
-        <div class="popup__tab" :class="{active: !activeTab}" @click="activeTab=!activeTab" >Autorizaciones</div>
+        <div class="popup__tab" :class="{active: !activeTab}" @click="activeTab=!activeTab">Autorizar</div>
+        <div class="popup__tab" :class="{active: activeTab}" @click="activeTab=!activeTab" >Autorizaciones</div>
     </div>
 
     <!-- Pestaña 1 -->
-    <form class="popup__pest form form-aut" v-show="activeTab" @submit.prevent="submitManageA">
+    <form class="popup__pest form form-aut" v-show="!activeTab" @submit.prevent="submitManageA">
         <input type="text" placeholder="No. documento" v-model="DataForm.no_doc" />
         <input type="email" placeholder="E-mail" v-model="DataForm.email" required />
         <div class="button__container">
@@ -76,7 +76,7 @@ const activeTab:Ref<Boolean> = ref(false);
     </form>
 
     <!-- Pestaña 2 -->
-    <div class="popup__pest container-control-registro"  v-show="!activeTab">
+    <div class="popup__pest container-control-registro"  v-show="activeTab">
         <div class="control-registro">
         <div class="registros">
             <div class="registro">
@@ -92,6 +92,11 @@ const activeTab:Ref<Boolean> = ref(false);
             <p>#####</p>
             <p><strong>Email: </strong></p>
             <p>qwerty@gmail.com</p>
+            <details>
+                <p><strong>Fecha creado</strong></p>
+                <p>01/01/01</p>
+            </details>
+
             <span class="destroy-authorization material-symbols-outlined" 
                 @click="submitDestroyA(1, '#####', 'qwerty@gmail.com')">delete</span>
             </div>

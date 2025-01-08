@@ -2,7 +2,7 @@
  <script setup lang="ts">
     import { useVuelidate } from '@vuelidate/core';
     import { required, minLength, maxLength } from '@vuelidate/validators';
-    import { ref, Ref, watch, computed, defineProps, withDefaults } from 'vue';
+    import { ref, Ref, computed, defineProps, withDefaults } from 'vue';
     import Dashboard_Data from '../interfaces/DashboardData';
     import { EMPTY_DASHBOARD } from '../components/constantInfo/empty_dashboard';
     import PrevDashboard from '../components/adminPop_up/PrevDashboard.vue';
@@ -10,7 +10,7 @@
 
 const props = withDefaults(
   defineProps<{
-    flag: boolean;
+    flag: boolean;//true is form1, false is form2
     EXISTING_DASHBOARD?: Dashboard_Data;
   }>(),
   {
@@ -18,6 +18,10 @@ const props = withDefaults(
     EXISTING_DASHBOARD: () => EMPTY_DASHBOARD as Dashboard_Data, // Por defecto, el objeto es EMPTY_DASHBOARD
   }
 );
+
+//Emits
+const emit = defineEmits(["sendDash","deleteDash"])
+
     // Constants 
 
     const initialData: Dashboard_Data = props.flag ? EMPTY_DASHBOARD : props.EXISTING_DASHBOARD;
@@ -43,30 +47,29 @@ const props = withDefaults(
     
     // Utility to get differences
     const buildDiffObject = (original: Dashboard_Data, updated: Dashboard_Data): any => {
-    const diff: any = {}; // Objeto para almacenar las diferencias
-    for (const key in original) {
-        const typedKey = key as keyof Dashboard_Data; // Garantizar que 'key' es válido
-        // Verificar que el valor ha cambiado y no es undefined
-        if (original[typedKey] !== updated[typedKey] && updated[typedKey] !== undefined) {
-            diff[typedKey] = updated[typedKey];
+        if (props.flag) {
+            return updated;
         }
-    }
-    return diff;
-};
-
-    // Watchers
-    watch(
-    () => dashboardDataForm.value,
-    (newVal) => {
-        console.log("Form updated:", newVal);
-    },
-    { deep: true }
-    );
+        const diff: any = {}; // Objeto para almacenar las diferencias
+        for (const key in original) {
+                const typedKey = key as keyof Dashboard_Data; // Garantizar que 'key' es válido
+                // Verificar que el valor ha cambiado y no es undefined
+                if (original[typedKey] !== updated[typedKey] && updated[typedKey] !== undefined) {
+                    diff[typedKey] = updated[typedKey];
+                }
+        }
+        return diff;
+    };
     
     // Methods
     const handleSubmit = (): void => {
         const differences = buildDiffObject(props.EXISTING_DASHBOARD, dashboardDataForm.value);
         console.log("Changes submitted:", differences);
+        if (props.flag) {
+            emit("sendDash", differences);
+        } else {
+            emit("sendDash", props.EXISTING_DASHBOARD.id, differences);
+        }
         
         // Reset form to initial state
         dashboardDataForm.value = { ...initialData };
@@ -78,11 +81,12 @@ const props = withDefaults(
     
     const handleDestroyDashboard = (): void => {
         console.log("Dashboard destroyed");
+        emit("deleteDash", props.EXISTING_DASHBOARD.id);
     };
 
  </script>
  <template>
-    <PrevDashboard @close="handleViewDashboard" v-show="preview" :EXISTING_DASHBOARD="EXISTING_DASHBOARD"/>
+    <PrevDashboard @close="handleViewDashboard" v-if="preview" :EXISTING_DASHBOARD="EXISTING_DASHBOARD"/>
     <div class="container__main">
         <p v-if="props.flag">Diligenciar todos los campos</p>
         <p v-if="!props.flag">Actualizar lo necesario</p>

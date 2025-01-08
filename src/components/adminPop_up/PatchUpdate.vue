@@ -26,22 +26,21 @@
     const v_reg$ = useVuelidate(rulesRegData, registerForm);
     const submitRegister = ():void => {
         // Manejar el envío del formulario de registro aquí
-        console.log('Datos de registro:', JSON.stringify(registerForm.value));
-        //emit
-        const passChangePopup: Ref<boolean> = ref(false);
-        const emit = defineEmits(["flag"]);
-
-        const closeRegister = ():void => {
-            emit("flag", passChangePopup.value);
-        }
+        console.log('Datos de registro:', JSON.stringify(registerForm.value));       
+        closeRegister();
     }
-
+    //emit
+    const passChangePopup: Ref<boolean> = ref(false);
+    const emit = defineEmits(["flag"]);
+    const closeRegister = ():void => {
+            emit("flag", passChangePopup.value);
+    }
 </script>
 <template>
     <div class="overlay">
     <!-- Formulario de registro (Pop-up) -->
   <div class="popup">
-      <h3>Actualizar registro</h3>
+      <h3>Actualizar Administrador</h3>
       <form @submit.prevent="submitRegister">
         <input type="text" placeholder="Nombre" v-model="registerForm.name"  />
         <input type="text" id="NoDoc" placeholder="No. documento" v-model="registerForm.no_doc">

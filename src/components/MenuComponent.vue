@@ -5,13 +5,14 @@
   import AlertPop_up from '../components/AlertPop_up.vue';
   import SMClass from '../class/SMClass';
   import AuthService from '../services/AuthService';
-  const sm = new SMClass();
+  import ShortMessageAP from '../interfaces/ShortMessageAP';
+  const sm: ShortMessageAP = new SMClass();
   const showAlert: Ref<boolean> = ref(false);
-  let flagLogoutToMainV = false;
-  let flagLoginToAdminV = false;
+  let flagLogoutToMainV: boolean = false;
+  let flagLoginToAdminV: boolean = false;
   const router = useRouter();
   const handleClose = () => {
-    showAlert.value = false;
+    showAlert.value = false; 
     if (flagLogoutToMainV){
       router.push({ name: 'MainV' });
       return
@@ -90,7 +91,7 @@
       emit(listEmmits[2], m.value[2]);
     }
   };
-
+console.log('adminmain: '+prop.adminMain)
 </script>
 
 <template>
@@ -167,7 +168,7 @@
           </span>
         </div>
       </li>
-      <li v-show="prop.adminMain" @click="alClick(9)">
+      <li v-show="prop.adminMain" @click="alClick(8)">
         <p v-show="showParagraph[9]">Autorizar nuevo</p>
         <div class="li_container" @mouseenter="handleMouseEnter(9)" @mouseleave="handleMouseLeave(9)">
           <span class="material-symbols-outlined">
