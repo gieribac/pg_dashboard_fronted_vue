@@ -72,9 +72,9 @@
   const handleClose = () => {
     showAlert.value = false;
   };
-  const updateDash = async (id: number, data: Dashboard_Data): Promise<void> => {
+  const updateDash = async (data: Dashboard_Data, id: string): Promise<void> => {
     try {
-      const success = await service.updatePost(id, data); 
+      const success = await service.updatePost(data, id); 
       showAlert.value = true;
       if (success) {
           triggerAlert(true,'Dashboard Actualizado');
@@ -87,7 +87,7 @@
       triggerAlert(false,'Error actualizando');
     }
   }
-  const destroyDash = async (id: number): Promise<void> => {
+  const destroyDash = async (id: string): Promise<void> => {
     try {
       const success = await service.deletePost(id); 
       showAlert.value = true;

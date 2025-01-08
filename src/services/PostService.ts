@@ -2,7 +2,7 @@ import { ref, Ref } from 'vue';
 import Dashboard_Data from '../interfaces/DashboardData';
 import { getDecodedToken } from './authHelpers';
 import DecodedToken from '../interfaces/DecodedToken';
-const url: string = 'http://127.0.0.1:8000/api/maps/';
+const url: string = 'http://127.0.0.1:8000/api/maps';
 
 class PostService {
     private posts: Ref<Dashboard_Data[]>;
@@ -37,7 +37,8 @@ class PostService {
             } else {
                 throw new Error('token decoded null');
             }
-            const response: Response = await fetch(url, {
+            console.log(JSON.stringify(data));
+            const response: Response = await fetch(`${url}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -57,7 +58,7 @@ class PostService {
     }
 
     // Método para eliminar un post
-    async deletePost(id: number): Promise<boolean> {
+    async deletePost(id: string): Promise<boolean> {
         try {
             const response: Response = await fetch(`${url}/${id}`, {
                 method: 'DELETE',
@@ -76,7 +77,7 @@ class PostService {
     }
 
     // Método para actualizar un post
-    async updatePost(id: number, updateData: Partial<Dashboard_Data>): Promise<Dashboard_Data | null> {
+    async updatePost(updateData: Partial<Dashboard_Data>, id: string): Promise<Dashboard_Data | null> {
         try {
             const decodedToken: DecodedToken | null = getDecodedToken();
             let data: Partial<Dashboard_Data>;
@@ -85,6 +86,7 @@ class PostService {
             } else {
                 throw new Error('token decoded null');
             }
+            console.log(`updated whidht id ${id} and data ${ JSON.stringify(data)}`)
             const response: Response = await fetch(`${url}/${id}`, {
                 method: 'PATCH',
                 headers: {

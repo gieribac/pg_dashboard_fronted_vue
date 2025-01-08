@@ -68,7 +68,7 @@ const emit = defineEmits(["sendDash","deleteDash"])
         if (props.flag) {
             emit("sendDash", differences);
         } else {
-            emit("sendDash", props.EXISTING_DASHBOARD.id, differences);
+            emit("sendDash", differences, props.EXISTING_DASHBOARD.id );
         }
         
         // Reset form to initial state
