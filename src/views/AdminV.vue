@@ -13,10 +13,11 @@
   import SMClass from '../class/SMClass';
   import PostService from '../services/PostService';
   const service = new PostService();
-  const posts = service.getPosts();
+  let posts = service.getPosts();
   onMounted(async () => {
     await service.fetchAll();
   })
+
   //consts
   const destroyUserPopup1: Ref<boolean> = ref(false);
   const patchUpdatePopup1: Ref<boolean> = ref(false);
@@ -25,6 +26,7 @@
   const statusOA: Ref<boolean> = ref(false);
   let otorgarAutorizacion: boolean = false;
   const decoded = getDecodedToken();
+  let reload: boolean  = false;
 
   if (decoded !== null) {
     otorgarAutorizacion = decoded.main === 1; 
@@ -67,6 +69,9 @@
     showAlert.value = true;
     sm.status = status_;
     sm.message = message_;
+    if (reload) {
+      window.location.reload();
+    }    
   };
   // Maneja el cierre de la alerta desde el hijo
   const handleClose = () => {
@@ -77,6 +82,7 @@
       const success = await service.updatePost(data, id); 
       showAlert.value = true;
       if (success) {
+          reload = true;
           triggerAlert(true,'Dashboard Actualizado');
           return
       } else {
@@ -92,6 +98,7 @@
       const success = await service.deletePost(id); 
       showAlert.value = true;
       if (success) {
+        reload = true;
         triggerAlert(true,'Dashboard Eliminado');
         return
       } else {
@@ -107,6 +114,7 @@
       const success = await service.createPost(data);
       showAlert.value = true;
       if (success) {
+        reload = true;
         triggerAlert(true,'Dashboard Cargado');
         return
       } else {

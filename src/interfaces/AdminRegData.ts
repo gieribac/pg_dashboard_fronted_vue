@@ -3,6 +3,6 @@ export default interface AdminRegData {
     no_doc: string;
     email: string;
     username: string;
-    password: string;
+    password?: string;
 }
 

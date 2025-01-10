@@ -17,12 +17,9 @@
         },
         username: {
             required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
-        },
-        password: {
-            required,  minLength: minLength(6), maxLength: maxLength(10)
         }
     }
-    const registerForm = ref<AdminRegData>({ name: '', no_doc: '', email: '', username: '', password: '' });
+    const registerForm = ref<AdminRegData>({ name: '', no_doc: '', email: '', username: ''});
     const v_reg$ = useVuelidate(rulesRegData, registerForm);
     const submitRegister = ():void => {
         // Manejar el envío del formulario de registro aquí
@@ -46,8 +43,7 @@
         <input type="text" id="NoDoc" placeholder="No. documento" v-model="registerForm.no_doc">
         <input type="email" placeholder="E-mail" v-model="registerForm.email"  />
         <input type="text" placeholder="Usuario" v-model="registerForm.username"  />
-        <input type="password" placeholder="Contraseña" v-model="registerForm.password" required />
-;        <div class="button__container">
+        <div class="button__container">
           <button class="accept" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
           <button class="cancel" type="button" @click="closeRegister">Cancelar</button>
         </div>        
