@@ -53,7 +53,7 @@ export default class AuthService {
     // Método para guardar el token en una cookie
     private setTokenInCookie(token: string): void {
         Cookies.set('jwt_token', token, { 
-            expires: 7, // Expira en 7 días
+            expires: 0.04, // Expira en 1 hora (1/24)días
             secure: true, // Solo en HTTPS
             sameSite: 'None', // Estrictamente en el mismo sitio
         });

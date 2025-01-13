@@ -12,6 +12,7 @@
   import AdminLoginData from '../interfaces/AdminLoginData';
   import AuthService from '../services/AuthService';
   import { useRouter } from 'vue-router';
+import AdminService from '../services/RegisterService';
   const router = useRouter();
   let lg_: AdminLoginData = {username:'', password: ''};
   let flagLoginToAdminV = false;
@@ -46,11 +47,10 @@
     }
   };
 
-
-
   const triggerAlertRg = async (rg: AdminRegData) => {
     try {
-      const { registerUser, success } = useRegisterService();
+      const adminService = new AdminService();
+      const { registerUser, success } = await adminService.useRegisterService();
       await registerUser(rg);
       showAlert.value = true;
       sm.status = success.value;

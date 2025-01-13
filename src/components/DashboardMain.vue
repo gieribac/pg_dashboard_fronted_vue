@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { withDefaults, defineProps } from 'vue';
+import { ref, Ref} from 'vue';
 import Dashboard_Data from '../interfaces/DashboardData';
 import { EMPTY_DASHBOARD } from '../components/constantInfo/empty_dashboard';
 
@@ -16,6 +16,10 @@ const formatDate = (originalDate: string): string => {
     const dateObject: Date = new Date(cleanedDate);
     return `${dateObject.toLocaleDateString()} ${dateObject.toLocaleTimeString()}`;
 };
+const preview: Ref<Boolean> = ref(false);
+const handleViewDashboard = (): void => {
+        preview.value = !preview.value;
+    };   
 
 const created: string = typeof(props.EXISTING_DASHBOARD.created_at) === "string" ? 
     formatDate(props.EXISTING_DASHBOARD.created_at): "";
@@ -27,7 +31,11 @@ const updated: string = typeof(props.EXISTING_DASHBOARD.updated_at) === "string"
 <template>
     <div class="fullscreen">
         <div class="fullscreen__dash">
-            <iframe
+            <button :class="{btn_active: preview}" class=" btn btn-primary ver" type="button" @click="handleViewDashboard ">
+                            <span class="material-symbols-outlined">{{preview ? 'visibility_off': 'visibility'}}</span>
+                            
+            </button>
+            <iframe  v-if="preview"
                 title="pa"
                 :src="props.EXISTING_DASHBOARD.urlDashboard"
                 frameborder="0"
@@ -78,15 +86,22 @@ const updated: string = typeof(props.EXISTING_DASHBOARD.updated_at) === "string"
 
 
 .btn {
-    background-color: #3c3744;
+    background-color: #3066be;
     color: #fff;
     border: none;
     border-radius: 5px;
-    padding: 5px 10px;
     font-size: 14px;
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 40px;
+    margin-bottom: 5px;
+}
+.btn_active {
+    background-color: #3c3744;
 }
 
 .fullscreen__dash {

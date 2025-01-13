@@ -1,6 +1,6 @@
 //   src/router/index.ts
 import { createRouter, createWebHistory, RouteRecordRaw} from 'vue-router';
-import { isAuthenticated } from '../services/authHelpers';
+import { isTokenValid } from '../services/authHelpers';
 import AdminV from '../views/AdminV.vue';
 import MainV from '../views/MainV.vue';
 
@@ -29,7 +29,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
   // Verifica si la ruta requiere autenticación
-  if (to.meta.requiresAuth && !isAuthenticated()) {
+  if (to.meta.requiresAuth && !isTokenValid()) {
     next({ name: 'MainV' }); // Redirige al usuario a la página de login si no está autenticado
   } else {
     next(); // Permite la navegación
