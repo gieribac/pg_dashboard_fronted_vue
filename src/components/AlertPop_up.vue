@@ -20,7 +20,7 @@ triggerAlert(true, "exito");
 <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
 -->
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted, defineEmits, defineProps, PropType } from 'vue';
+  import { ref, onMounted, onUnmounted, PropType } from 'vue';
   import ShortMessageAP from '../interfaces/ShortMessageAP';
   
 

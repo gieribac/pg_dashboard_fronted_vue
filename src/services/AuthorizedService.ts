@@ -17,8 +17,7 @@ class PostService { //clase de servicio para consumo de api
     //metodos de clase
     //metodo para pedir la informacion al endpoint y disponerla 
     async fetchAll(): Promise<void>{ 
-        try {
-            
+        try {            
             const response: Response = await fetch (url);
             const json: Authorization[] = await response.json();
             this.authoriationData.value = json;

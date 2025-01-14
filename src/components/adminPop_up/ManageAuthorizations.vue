@@ -2,7 +2,7 @@
 //Pop-up Autorizar Nuevo
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength, numeric, email } from '@vuelidate/validators';
-import { defineEmits, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 
 const dataFormPopup: Ref<boolean> = ref(false);
 const statusQueryPupup: Ref<boolean> = ref(false);

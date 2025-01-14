@@ -43,4 +43,4 @@ export function isTokenValid(): boolean {
       console.error('Error al validar el token:', e);
       return false; // Token inválido o corrupto
     }
-  }
+}

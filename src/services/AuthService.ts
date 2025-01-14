@@ -25,6 +25,7 @@ export default class AuthService {
 
     async login(obj: AdminLoginData): Promise<boolean> {
         try {
+            console.log('login')
             const response = await (await fetch(loginUrl, {
                 method: 'POST',
                 headers: {
@@ -52,8 +53,9 @@ export default class AuthService {
 
     // Método para guardar el token en una cookie
     private setTokenInCookie(token: string): void {
+        const oneHour: number = 1 / 24;
         Cookies.set('jwt_token', token, { 
-            expires: 0.04, // Expira en 1 hora (1/24)días
+            expires: oneHour, // Expira en 1 hora 
             secure: true, // Solo en HTTPS
             sameSite: 'None', // Estrictamente en el mismo sitio
         });
@@ -105,6 +107,7 @@ export default class AuthService {
     async me(): Promise<boolean> {
         try {
             const token = this.getTokenFromCookie();
+            
             if (!token) {
                 this.error.value = 'No token found';
                 return false;

@@ -1,22 +1,21 @@
 import { ref, Ref } from 'vue';
+import { getDecodedToken } from './authHelpers';
 import AdminRegData from '../interfaces/AdminRegData';
 import DecodedToken from '../interfaces/DecodedToken';
-import { getDecodedToken } from './authHelpers';
 const url: string = 'http://127.0.0.1:8000/api/admin/';
-
-
 export default class AdminService {
     private admins: Ref<AdminRegData[]>;
 
     constructor() {
         this.admins = ref<AdminRegData[]>([]);
+        this.admin = ref<AdminRegData | undefined>(undefined);
     }
 
     // Getter para admins
     getAdmins(): Ref<AdminRegData[]> {
         return this.admins;
     }
-
+ 
     // Método para obtener todos 
     async fetchAll(): Promise<void> {
         try {

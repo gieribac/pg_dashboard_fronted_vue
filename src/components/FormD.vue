@@ -2,7 +2,7 @@
  <script setup lang="ts">
     import { useVuelidate } from '@vuelidate/core';
     import { required, minLength, maxLength } from '@vuelidate/validators';
-    import { ref, Ref, computed, defineProps, withDefaults } from 'vue';
+    import { ref, Ref, computed } from 'vue';
     import Dashboard_Data from '../interfaces/DashboardData';
     import { EMPTY_DASHBOARD } from '../components/constantInfo/empty_dashboard';
     import PrevDashboard from '../components/adminPop_up/PrevDashboard.vue';

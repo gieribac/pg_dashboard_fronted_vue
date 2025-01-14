@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { defineEmits, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength,  alphaNum } from '@vuelidate/validators';
 import AdminLoginData from '../../interfaces/AdminLoginData';
@@ -19,7 +19,7 @@ const loginForm = ref<AdminLoginData>({ username: '', password: '' });
 // Métodos de envío
 
 const submitLogin = () :void => {
-  // Manejar el envío del formulario de inicio de sesión aquí
+  console.log('submitLogin')
   emit("pd", m);
   emit("lg", loginForm.value);
 };

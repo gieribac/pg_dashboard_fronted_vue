@@ -106,8 +106,8 @@ import AdminService from '../services/RegisterService';
 
 <template>
   <MenuComponent @in="loginPop_up" @rg="registerPop_up" @cl="closed" @info="showInfo" :datalogin="lg_"/>
-  <regPopup @pd="closeRegisterPop_up" @rgd="triggerAlertRg" v-if="showRegisterPopup" class="popup"/>
-  <loginPopup @pd="closeLoginPop_up" @lg="login" v-if="showLoginPopup" class="popup"/>
+  <RegPopup @pd="closeRegisterPop_up" @rgd="triggerAlertRg" v-if="showRegisterPopup" class="popup"/>
+  <LoginPopup @pd="closeLoginPop_up" @lg="login" v-if="showLoginPopup" class="popup"/>
   <DashboardMain
       v-for="(post, index) in posts"
       :key="index"   

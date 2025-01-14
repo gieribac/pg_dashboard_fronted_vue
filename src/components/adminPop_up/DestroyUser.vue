@@ -2,7 +2,7 @@
 
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength } from '@vuelidate/validators';
-import { defineEmits, ref, Ref } from 'vue';
+import { ref, Ref } from 'vue';
 
 const destroyUserPopup: Ref<boolean> = ref(false);
 

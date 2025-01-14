@@ -1,5 +1,8 @@
 export default interface DecodedToken {
     sub: string; // ID del usuario
-    main: number; // Campo adicional en tu token,
+    main: number; // Campos adicionales
     name: string; 
+    no_doc: string;
+    email:string;
+    username: string;
 }

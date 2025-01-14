@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { listEmmits } from '../components/constantInfo/listEmmits';
-  import { defineEmits, defineProps, ref, Ref} from 'vue';
+  import { ref, Ref} from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import AlertPop_up from '../components/AlertPop_up.vue';
   import SMClass from '../class/SMClass';

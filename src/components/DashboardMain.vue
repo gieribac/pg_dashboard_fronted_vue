@@ -36,7 +36,7 @@ const updated: string = typeof(props.EXISTING_DASHBOARD.updated_at) === "string"
                             
             </button>
             <iframe  v-if="preview"
-                title="pa"
+                title=""
                 :src="props.EXISTING_DASHBOARD.urlDashboard"
                 frameborder="0"
                 allowfullscreen="true"

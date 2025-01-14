@@ -1,5 +1,7 @@
 <script setup lang="ts">
   import { ref, Ref, onMounted } from 'vue';
+  import { getDecodedToken } from '../services/authHelpers';  
+  import { EMPTY_ADMIN } from '../components/constantInfo/empty_admin';
   import router from '../router';
   import ChangePass from '../components/adminPop_up/ChangePass.vue';
   import DestroyUser from '../components/adminPop_up/DestroyUser.vue';
@@ -8,10 +10,14 @@
   import MenuComponent from '../components/MenuComponent.vue';
   import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
   import AlertPop_up from '../components/AlertPop_up.vue';
-  import { getDecodedToken } from '../services/authHelpers';
   import Dashboard_Data from '../interfaces/DashboardData';
   import SMClass from '../class/SMClass';
   import PostService from '../services/PostService';
+  import DecodedToken from '../interfaces/DecodedToken';
+  import AdminRegData from '../interfaces/AdminRegData';
+ 
+  const decodedToken: DecodedToken | null = getDecodedToken();
+  console.log('decodedToken',decodedToken);
   const service = new PostService();
   let posts = service.getPosts();
   onMounted(async () => {
@@ -25,11 +31,12 @@
   const showAlert: Ref<boolean> = ref(false);
   const statusOA: Ref<boolean> = ref(false);
   let otorgarAutorizacion: boolean = false;
-  const decoded = getDecodedToken();
   let reload: boolean  = false;
-
-  if (decoded !== null) {
-    otorgarAutorizacion = decoded.main === 1; 
+  let dataAdmin: AdminRegData = EMPTY_ADMIN;
+  if (decodedToken !== null) {
+    otorgarAutorizacion = decodedToken.main === 1; 
+    const {name, no_doc, email, username} = decodedToken;
+    dataAdmin = {name: name, no_doc: no_doc, email: email, username: username};
   }
 
   const sm = new SMClass();
@@ -141,7 +148,7 @@
       @deleteDash="destroyDash"
     />
     <ChangePass @click="fChange" v-if="passChangePopup1" />
-    <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" />
+    <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" :EXISTING_ADMIN="dataAdmin" />
     <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>
