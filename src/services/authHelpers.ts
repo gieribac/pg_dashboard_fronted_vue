@@ -3,12 +3,21 @@ import { jwtDecode } from 'jwt-decode'; // Importación con llaves para jwtDecod
 import DecodedToken from '../interfaces/DecodedToken';
 const authService = new AuthService();
 
+export function returnToken(): string {
+  const token: string | undefined = authService.getTokenFromCookie();
+  if (typeof(token) === 'string') {
+    console.log('returnToken ')
+    return token;
+  }
+  return 'token undefined';
+}
+  
 export function isAuthenticated(): boolean {
     const token = authService.getTokenFromCookie();
     return token !== undefined && token !== ''; // Autenticado si el token existe y no está vacío
 }
 
-export function getDecodedToken(): DecodedToken | null {
+export function getDecodedToken():DecodedToken | null {
     const token = authService.getTokenFromCookie();
 
     if (!token) {

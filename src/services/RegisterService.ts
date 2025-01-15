@@ -5,7 +5,7 @@ import DecodedToken from '../interfaces/DecodedToken';
 const url: string = 'http://127.0.0.1:8000/api/admin/';
 export default class AdminService {
     private admins: Ref<AdminRegData[]>;
-
+    private admin: Ref<AdminRegData | undefined>;
     constructor() {
         this.admins = ref<AdminRegData[]>([]);
         this.admin = ref<AdminRegData | undefined>(undefined);

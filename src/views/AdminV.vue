@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, Ref, onMounted } from 'vue';
+  import { ref, Ref, onMounted} from 'vue';
   import { getDecodedToken } from '../services/authHelpers';  
   import { EMPTY_ADMIN } from '../components/constantInfo/empty_admin';
   import router from '../router';
@@ -17,9 +17,11 @@
   import AdminRegData from '../interfaces/AdminRegData';
  
   const decodedToken: DecodedToken | null = getDecodedToken();
-  console.log('decodedToken',decodedToken);
+  let posts = ref<Dashboard_Data[]>([]);
+ 
   const service = new PostService();
-  let posts = service.getPosts();
+  posts = service.getPosts();
+  let reload = false;
   onMounted(async () => {
     await service.fetchAll();
   })
@@ -31,7 +33,6 @@
   const showAlert: Ref<boolean> = ref(false);
   const statusOA: Ref<boolean> = ref(false);
   let otorgarAutorizacion: boolean = false;
-  let reload: boolean  = false;
   let dataAdmin: AdminRegData = EMPTY_ADMIN;
   if (decodedToken !== null) {
     otorgarAutorizacion = decodedToken.main === 1; 
@@ -39,10 +40,7 @@
     dataAdmin = {name: name, no_doc: no_doc, email: email, username: username};
   }
 
-  const sm = new SMClass();
-
   const dForm: boolean = true;//true is Form1, false is form2
-
   const fRegresar = (): void => {
     router.push({ name: 'MainV' });
   }
@@ -71,7 +69,8 @@
     passChangePopup1.value = false;
   }
 
-  // // Función para montar la alerta
+  // Función para montar la alerta
+  const sm = new SMClass();
   const triggerAlert = (status_: boolean, message_: string):void => {
     showAlert.value = true;
     sm.status = status_;
@@ -86,10 +85,11 @@
   };
   const updateDash = async (data: Dashboard_Data, id: string): Promise<void> => {
     try {
+      const service = new PostService();
       const success = await service.updatePost(data, id); 
       showAlert.value = true;
       if (success) {
-          reload = true;
+          // reload = true;
           triggerAlert(true,'Dashboard Actualizado');
           return
       } else {
@@ -132,6 +132,12 @@
       triggerAlert(false,'Error al Cargar');
     }
   }
+  // const updateDataView = (source: Partial<Dashboard_Data>, id: string) : void => {
+  //     (buscar post que tiene la id y asignarlo a target)  
+  // (post a actualizar) = Object.assign(target,source);
+  //   }
+
+  // crear variable para dejar de renderizar Form2 si fue eliminado (destroyDash)
 
 </script>
 <template>

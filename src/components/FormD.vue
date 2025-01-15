@@ -65,14 +65,12 @@ const emit = defineEmits(["sendDash","deleteDash"])
     const handleSubmit = (): void => {
         const differences = buildDiffObject(props.EXISTING_DASHBOARD, dashboardDataForm.value);
         console.log("Changes submitted:", differences);
-        if (props.flag) {
+        if (props.flag) {            
             emit("sendDash", differences);
         } else {
             emit("sendDash", differences, props.EXISTING_DASHBOARD.id );
-        }
-        
-        // Reset form to initial state
-        dashboardDataForm.value = { ...initialData };
+        } 
+        dashboardDataForm.value = { ...initialData };      
     };
         
     const handleViewDashboard = (): void => {
@@ -83,7 +81,7 @@ const emit = defineEmits(["sendDash","deleteDash"])
         console.log("Dashboard destroyed");
         emit("deleteDash", props.EXISTING_DASHBOARD.id);
     };
-
+    
  </script>
  <template>
     <PrevDashboard @close="handleViewDashboard" v-if="preview" :EXISTING_DASHBOARD="EXISTING_DASHBOARD"/>

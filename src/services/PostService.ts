@@ -1,6 +1,6 @@
 import { ref, Ref } from 'vue';
 import Dashboard_Data from '../interfaces/DashboardData';
-import { getDecodedToken } from './authHelpers';
+import { getDecodedToken, returnToken } from './authHelpers';
 import DecodedToken from '../interfaces/DecodedToken';
 const url: string = 'http://127.0.0.1:8000/api/maps';
 
@@ -31,6 +31,7 @@ class PostService {
     async createPost(postData: Partial<Dashboard_Data>): Promise<Dashboard_Data | null> {
         try {
             const decodedToken: DecodedToken | null = getDecodedToken();
+            const token: string = returnToken();
             let data: Partial<Dashboard_Data>;
             if (decodedToken !== null) {
                data = Object.assign(postData, {author: decodedToken.name})
@@ -38,10 +39,12 @@ class PostService {
                 throw new Error('token decoded null');
             }
             console.log(JSON.stringify(data));
+            console.log('token',token);
             const response: Response = await fetch(`${url}/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(data),
             });
@@ -60,8 +63,12 @@ class PostService {
     // Método para eliminar un post
     async deletePost(id: string): Promise<boolean> {
         try {
+            const token: string = returnToken();
             const response: Response = await fetch(`${url}/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             if (!response.ok) {
@@ -81,6 +88,7 @@ class PostService {
         try {
             const decodedToken: DecodedToken | null = getDecodedToken();
             let data: Partial<Dashboard_Data>;
+            const token: string = returnToken();
             if (decodedToken !== null) {
                data = Object.assign(updateData, {author: decodedToken.name})
             } else {
@@ -91,6 +99,7 @@ class PostService {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify(data),
             });
