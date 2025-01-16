@@ -21,7 +21,6 @@
  
   const service = new PostService();
   posts = service.getPosts();
-  let reload = false;
   onMounted(async () => {
     await service.fetchAll();
   })
@@ -75,9 +74,7 @@
     showAlert.value = true;
     sm.status = status_;
     sm.message = message_;
-    if (reload) {
-      window.location.reload();
-    }    
+    
   };
   // Maneja el cierre de la alerta desde el hijo
   const handleClose = () => {
@@ -89,9 +86,9 @@
       const success = await service.updatePost(data, id); 
       showAlert.value = true;
       if (success) {
-          // reload = true;
-          triggerAlert(true,'Dashboard Actualizado');
-          return
+        updateDataView(data, id, undefined);
+        triggerAlert(true,'Dashboard Actualizado');
+        return
       } else {
           triggerAlert(false,'Actualizanción fallida');
       }
@@ -105,7 +102,6 @@
       const success = await service.deletePost(id); 
       showAlert.value = true;
       if (success) {
-        reload = true;
         triggerAlert(true,'Dashboard Eliminado');
         return
       } else {
@@ -118,10 +114,13 @@
   }
   const sendDash = async (data: Dashboard_Data): Promise<void> => {    
     try {
+      console.log(posts.value.length)
       const success = await service.createPost(data);
+      console.log(posts.value.length)
       showAlert.value = true;
       if (success) {
-        reload = true;
+        updateDataView(undefined, undefined, data);
+        console.log(posts.value.length)
         triggerAlert(true,'Dashboard Cargado');
         return
       } else {
@@ -132,24 +131,48 @@
       triggerAlert(false,'Error al Cargar');
     }
   }
-  // const updateDataView = (source: Partial<Dashboard_Data>, id: string) : void => {
-  //     (buscar post que tiene la id y asignarlo a target)  
-  // (post a actualizar) = Object.assign(target,source);
-  //   }
+  const updateDataView = (source?: Partial<Dashboard_Data>, idBuscado?: string, data?: Dashboard_Data) : void => {    
+      if (data) {
+        console.log('posts1 ',posts.value);
+        const idf = posts.value[posts.value.length-2].id;
+        console.log(typeof(idf))
+        if (typeof(idf) === 'number') {
+          data.id = idf+1;
+          posts.value[posts.value.length-1] = data;
+          console.log('posts2 ',posts.value);
+        }
+        
+        posts.value.splice(posts.value.length-1,1);
+        posts.value.push(data);
+        console.log('posts3 ',posts.value);
+      } else {
+        const found: Dashboard_Data | undefined = posts.value.find(objeto => objeto.id === idBuscado);
+        if (found != undefined) {
+          const index: number = posts.value.findIndex(objeto => objeto.id === idBuscado);
+          posts.value[index] = Object.assign(found,source);
+        }    
+      }       
+  }
 
   // crear variable para dejar de renderizar Form2 si fue eliminado (destroyDash)
+  // const removeView = (idBuscado: string) : void => {
+  //   showDeletedIndex = parseInt(idBuscado);
+  //   const index: number = posts.value.findIndex(objeto => objeto.id === idBuscado);
+  //   posts.value.splice(index,1);
+  //   console.log(posts.value.length);
+  // }
 
 </script>
 <template>
   <div class="cont__main">
     <h2 >Carga de dashboards</h2>
-    <FormD :flag="dForm" @sendDash="sendDash"/>
+    <FormD :flag="dForm"  @sendDash="sendDash" />
     <h2>Edición de dashboards</h2>
     <FormD
       v-for="(post, index) in posts"
       :key="index"      
       :flag="!dForm"
-      :EXISTING_DASHBOARD="post"
+      :EXISTING_DASHBOARD="ref(post)"
       @sendDash="updateDash"
       @deleteDash="destroyDash"
     />

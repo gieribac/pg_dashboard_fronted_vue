@@ -86,6 +86,7 @@ class PostService {
     // Método para actualizar un post
     async updatePost(updateData: Partial<Dashboard_Data>, id: string): Promise<Dashboard_Data | null> {
         try {
+            console.log('updatePost')
             const decodedToken: DecodedToken | null = getDecodedToken();
             let data: Partial<Dashboard_Data>;
             const token: string = returnToken();

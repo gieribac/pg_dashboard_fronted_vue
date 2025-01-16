@@ -1,5 +1,5 @@
 export default interface Dashboard_Data {
-    id?: string;
+    id?: string | number;
     post: boolean;
     author?: string;
     title: string;

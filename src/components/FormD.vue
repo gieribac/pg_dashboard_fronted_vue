@@ -2,7 +2,7 @@
  <script setup lang="ts">
     import { useVuelidate } from '@vuelidate/core';
     import { required, minLength, maxLength } from '@vuelidate/validators';
-    import { ref, Ref, computed } from 'vue';
+    import { ref, Ref, computed, watch} from 'vue';
     import Dashboard_Data from '../interfaces/DashboardData';
     import { EMPTY_DASHBOARD } from '../components/constantInfo/empty_dashboard';
     import PrevDashboard from '../components/adminPop_up/PrevDashboard.vue';
@@ -11,24 +11,27 @@
 const props = withDefaults(
   defineProps<{
     flag: boolean;//true is form1, false is form2
-    EXISTING_DASHBOARD?: Dashboard_Data;
+    EXISTING_DASHBOARD?: Ref<Dashboard_Data>;
+
   }>(),
   {
     flag: false, // Por defecto, la bandera es false
-    EXISTING_DASHBOARD: () => EMPTY_DASHBOARD as Dashboard_Data, // Por defecto, el objeto es EMPTY_DASHBOARD
+    EXISTING_DASHBOARD: () => ref<Dashboard_Data>(EMPTY_DASHBOARD) as Ref<Dashboard_Data>, // Por defecto, el objeto es EMPTY_DASHBOARD
+
   }
 );
 
-//Emits
-const emit = defineEmits(["sendDash","deleteDash"])
-
+    //Emits
+    const emit = defineEmits(["sendDash","deleteDash"]);
+    // variables
     // Constants 
-
-    const initialData: Dashboard_Data = props.flag ? EMPTY_DASHBOARD : props.EXISTING_DASHBOARD;
+    let initialData = ref<Dashboard_Data>({ ...props.EXISTING_DASHBOARD.value });
+    if (props.flag) {
+        initialData.value = EMPTY_DASHBOARD;
+    }
     const preview: Ref<Boolean> = ref(false);
     // Reactive state
-    const dashboardDataForm = ref<Dashboard_Data>({ ...initialData });
-    
+    const dashboardDataForm = ref<Dashboard_Data>({ ...initialData.value });
     // Validation rules
     const rulesDashboardData = {
     title: { required, minLength: minLength(3), maxLength: maxLength(30) },
@@ -42,7 +45,7 @@ const emit = defineEmits(["sendDash","deleteDash"])
     
     // Computed properties
     const hasNoChanges = computed((): boolean => {
-    return JSON.stringify(dashboardDataForm.value) === JSON.stringify(props.EXISTING_DASHBOARD);
+    return JSON.stringify(dashboardDataForm.value) === JSON.stringify(props.EXISTING_DASHBOARD.value);
     });
     
     // Utility to get differences
@@ -63,14 +66,14 @@ const emit = defineEmits(["sendDash","deleteDash"])
     
     // Methods
     const handleSubmit = (): void => {
-        const differences = buildDiffObject(props.EXISTING_DASHBOARD, dashboardDataForm.value);
+        const differences = buildDiffObject(props.EXISTING_DASHBOARD.value, dashboardDataForm.value);
         console.log("Changes submitted:", differences);
         if (props.flag) {            
             emit("sendDash", differences);
         } else {
-            emit("sendDash", differences, props.EXISTING_DASHBOARD.id );
+            emit("sendDash", differences, props.EXISTING_DASHBOARD.value.id );
         } 
-        dashboardDataForm.value = { ...initialData };      
+        dashboardDataForm.value = { ...initialData.value };      
     };
         
     const handleViewDashboard = (): void => {
@@ -79,12 +82,25 @@ const emit = defineEmits(["sendDash","deleteDash"])
     
     const handleDestroyDashboard = (): void => {
         console.log("Dashboard destroyed");
-        emit("deleteDash", props.EXISTING_DASHBOARD.id);
+        emit("deleteDash", props.EXISTING_DASHBOARD.value.id);
     };
-    
+    watch(
+        () => props.EXISTING_DASHBOARD.value,
+        (newVal) => {
+            console.log("Form updated:", newVal);
+            // Por ejemplo, podrías validar los datos aquí:
+            if (newVal.title === "") {
+            console.log("El título no puede estar vacío");
+            }
+            if (!props.flag){
+                dashboardDataForm.value = {...props.EXISTING_DASHBOARD.value};
+            }
+        },
+        { deep: true }
+    );
  </script>
  <template>
-    <PrevDashboard @close="handleViewDashboard" v-if="preview" :EXISTING_DASHBOARD="EXISTING_DASHBOARD"/>
+    <PrevDashboard @close="handleViewDashboard" v-if="preview" :EXISTING_DASHBOARD="EXISTING_DASHBOARD.value"/>
     <div class="container__main">
         <p v-if="props.flag">Diligenciar todos los campos</p>
         <p v-if="!props.flag">Actualizar lo necesario</p>
