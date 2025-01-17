@@ -1,5 +1,5 @@
 export default interface Authorization {
-    id?: number;
+    id?: number | string;
     no_doc: string;
     email: string;
     created_at?: string;

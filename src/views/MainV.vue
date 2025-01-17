@@ -8,11 +8,11 @@
   import AlertPop_up from '../components/AlertPop_up.vue';
   import SMClass from '../class/SMClass';
   import AdminRegData from '../interfaces/AdminRegData';
-  import useRegisterService from '../services/RegisterService'
+  import useRegisterService from '../services/AdminService'
   import AdminLoginData from '../interfaces/AdminLoginData';
   import AuthService from '../services/AuthService';
   import { useRouter } from 'vue-router';
-import AdminService from '../services/RegisterService';
+import AdminService from '../services/AdminService';
   const router = useRouter();
   let lg_: AdminLoginData = {username:'', password: ''};
   let flagLoginToAdminV = false;

@@ -2,15 +2,20 @@ import { ref, Ref } from 'vue';
 import Dashboard_Data from '../interfaces/DashboardData';
 import { getDecodedToken, returnToken } from './authHelpers';
 import DecodedToken from '../interfaces/DecodedToken';
+import { isTokenValid } from '../services/authHelpers'; 
+import { useRouter } from 'vue-router'; // Para redirigir
 const url: string = 'http://127.0.0.1:8000/api/maps';
 
 class PostService {
+    private router = useRouter();
     private posts: Ref<Dashboard_Data[]>;
 
     constructor() {
         this.posts = ref<Dashboard_Data[]>([]);
     }
-
+    private routerToMain(){
+        this.router.push({ name: 'MainV' });
+    }
     // Getter para posts
     getPosts(): Ref<Dashboard_Data[]> {
         return this.posts;
@@ -30,6 +35,10 @@ class PostService {
     // Método para crear un nuevo post
     async createPost(postData: Partial<Dashboard_Data>): Promise<Dashboard_Data | null> {
         try {
+            if (!isTokenValid()) {
+                this.routerToMain(); // Redirige al usuario a la página de inicio
+                throw new Error('Token vencido');
+            }
             const decodedToken: DecodedToken | null = getDecodedToken();
             const token: string = returnToken();
             let data: Partial<Dashboard_Data>;
@@ -48,6 +57,10 @@ class PostService {
                 },
                 body: JSON.stringify(data),
             });
+            if (response.status === 401) {
+                this.routerToMain(); // Redirige si el token es inválido desde el servidor
+                throw new Error('No autorizado. Token inválido o vencido');
+            }
             if (!response.ok) {
                 throw new Error(`Error creating post: ${response.status}`);
             }
@@ -63,6 +76,11 @@ class PostService {
     // Método para eliminar un post
     async deletePost(id: string): Promise<boolean> {
         try {
+            // Verifica si el token es válido
+            if (!isTokenValid()) {
+                this.routerToMain(); // Redirige al usuario a la página de inicio
+                throw new Error('Token vencido');
+            }
             const token: string = returnToken();
             const response: Response = await fetch(`${url}/${id}`, {
                 method: 'DELETE',
@@ -70,7 +88,10 @@ class PostService {
                     'Authorization': `Bearer ${token}`
                 }
             });
-
+            if (response.status === 401) {
+                this.routerToMain(); // Redirige si el token es inválido desde el servidor
+                throw new Error('No autorizado. Token inválido o vencido');
+            }
             if (!response.ok) {
                 throw new Error(`Error deleting post: ${response.status}`);
             }
@@ -86,7 +107,11 @@ class PostService {
     // Método para actualizar un post
     async updatePost(updateData: Partial<Dashboard_Data>, id: string): Promise<Dashboard_Data | null> {
         try {
-            console.log('updatePost')
+            if (!isTokenValid()) {
+            this.routerToMain(); // Redirige al usuario a la página de inicio
+            throw new Error('Token vencido');
+            }
+        
             const decodedToken: DecodedToken | null = getDecodedToken();
             let data: Partial<Dashboard_Data>;
             const token: string = returnToken();
@@ -104,7 +129,10 @@ class PostService {
                 },
                 body: JSON.stringify(data),
             });
-
+            if (response.status === 401) {
+                this.routerToMain(); // Redirige si el token es inválido desde el servidor
+                throw new Error('No autorizado. Token inválido o vencido');
+            }
             if (!response.ok) {
                 throw new Error(`Error updating post: ${response.status}`);
             }
