@@ -153,7 +153,7 @@ console.log('adminmain: '+prop.adminMain)
         </div>
       </li>
       <li @click="alClick(6)">
-        <p v-show="showParagraph[7]">Actualizar registro</p>
+        <p v-show="showParagraph[7]">Actualizar administrador</p>
         <div class="li_container" @mouseenter="handleMouseEnter(7)" @mouseleave="handleMouseLeave(7)">
           <span class="material-symbols-outlined">
             published_with_changes

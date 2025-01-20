@@ -67,7 +67,7 @@ const props = withDefaults(
         <input type="text" v-model="registerForm.username"  />
         <label for="user" class="form-label">Usuario</label>
         <div class="button__container">
-          <button class="accept" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
+          <button class="accept btn" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
           <button class="cancel" type="button" @click="closeRegister">Cancelar</button>
         </div>        
       </form>
@@ -102,5 +102,9 @@ const props = withDefaults(
 .form-label{
     font-size: 14px;
     width: 80%;
+}
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 </style>

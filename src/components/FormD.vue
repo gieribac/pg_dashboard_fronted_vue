@@ -12,12 +12,13 @@ const props = withDefaults(
   defineProps<{
     flag: boolean;//true is form1, false is form2
     EXISTING_DASHBOARD?: Ref<Dashboard_Data>;
+    flagWatchData: boolean;
 
   }>(),
   {
     flag: false, // Por defecto, la bandera es false
     EXISTING_DASHBOARD: () => ref<Dashboard_Data>(EMPTY_DASHBOARD) as Ref<Dashboard_Data>, // Por defecto, el objeto es EMPTY_DASHBOARD
-
+    flagWatchData: false,
   }
 );
 
@@ -85,13 +86,11 @@ const props = withDefaults(
         emit("deleteDash", props.EXISTING_DASHBOARD.value.id);
     };
     watch(
-        () => props.EXISTING_DASHBOARD.value,
+        () =>props.flagWatchData,
         (newVal) => {
             console.log("Form updated:", newVal);
             // Por ejemplo, podrías validar los datos aquí:
-            if (newVal.title === "") {
-            console.log("El título no puede estar vacío");
-            }
+            
             if (!props.flag){
                 dashboardDataForm.value = {...props.EXISTING_DASHBOARD.value};
             }

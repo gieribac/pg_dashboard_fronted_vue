@@ -32,6 +32,7 @@
   const showAlert: Ref<boolean> = ref(false);
   const statusOA: Ref<boolean> = ref(false);
   let otorgarAutorizacion: boolean = false;
+  let flag_updateDataView: boolean = false;
   let dataAdmin: AdminRegData = EMPTY_ADMIN;
   if (decodedToken !== null) {
     otorgarAutorizacion = decodedToken.main === 1; 
@@ -132,19 +133,15 @@
     }
   }
   const updateDataView = (source?: Partial<Dashboard_Data>, idBuscado?: string, data?: Dashboard_Data) : void => {    
+      flag_updateDataView = !flag_updateDataView;
       if (data) {
-        console.log('posts1 ',posts.value);
         const idf = posts.value[posts.value.length-2].id;
-        console.log(typeof(idf))
         if (typeof(idf) === 'number') {
           data.id = idf+1;
           posts.value[posts.value.length-1] = data;
-          console.log('posts2 ',posts.value);
-        }
-        
+        }        
         posts.value.splice(posts.value.length-1,1);
         posts.value.push(data);
-        console.log('posts3 ',posts.value);
       } else {
         const found: Dashboard_Data | undefined = posts.value.find(objeto => objeto.id === idBuscado);
         if (found != undefined) {
@@ -154,31 +151,25 @@
       }       
   }
 
-  // crear variable para dejar de renderizar Form2 si fue eliminado (destroyDash)
-  // const removeView = (idBuscado: string) : void => {
-  //   showDeletedIndex = parseInt(idBuscado);
-  //   const index: number = posts.value.findIndex(objeto => objeto.id === idBuscado);
-  //   posts.value.splice(index,1);
-  //   console.log(posts.value.length);
-  // }
 
 </script>
 <template>
   <div class="cont__main">
     <h2 >Carga de dashboards</h2>
-    <FormD :flag="dForm"  @sendDash="sendDash" />
+    <FormD :flag="dForm"  @sendDash="sendDash" :flagWatchData="false" />
     <h2>Edición de dashboards</h2>
     <FormD
       v-for="(post, index) in posts"
       :key="index"      
       :flag="!dForm"
       :EXISTING_DASHBOARD="ref(post)"
+      :flagWatchData="flag_updateDataView"
       @sendDash="updateDash"
       @deleteDash="destroyDash"
     />
-    <ChangePass @click="fChange" v-if="passChangePopup1" />
-    <PatchUpdate @click="fPatch" v-if="patchUpdatePopup1" :EXISTING_ADMIN="dataAdmin" />
-    <DestroyUser @click="fDestroy" v-if="destroyUserPopup1" />
+    <ChangePass @flag="fChange" v-if="passChangePopup1" />
+    <PatchUpdate @flag="fPatch" v-if="patchUpdatePopup1" :EXISTING_ADMIN="dataAdmin" />
+    <DestroyUser @flag="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>
     <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
