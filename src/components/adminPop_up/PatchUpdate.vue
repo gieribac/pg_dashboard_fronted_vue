@@ -10,14 +10,14 @@
 
 const props = withDefaults(
   defineProps<{
-    EXISTING_ADMIN?: AdminRegData;
+    EXISTING_ADMIN?: Ref<AdminRegData>;
   }>(),
   {
-    EXISTING_ADMIN: () => EMPTY_ADMIN as AdminRegData, // Por defecto, el objeto es EMPTY_DASHBOARD
+    EXISTING_ADMIN: () => ref<AdminRegData>(EMPTY_ADMIN) as Ref<AdminRegData>, // Por defecto, el objeto es EMPTY_DASHBOARD
   }
 );
     // Reactive state
-    const registerForm = ref<AdminRegData>({ ...props.EXISTING_ADMIN }); 
+    const registerForm = ref<AdminRegData>({...props.EXISTING_ADMIN.value}); 
 
     // objetos con las reglas de validación
     const rulesRegData = {
@@ -34,15 +34,29 @@ const props = withDefaults(
             required, alphaNum, minLength: minLength(3), maxLength: maxLength(10)
         }
     }
+    const buildDiffObject = (original: AdminRegData, updated: AdminRegData): any => {
+        const diff: any = {}; // Objeto para almacenar las diferencias
+        for (const key in original) {
+                const typedKey = key as keyof AdminRegData; // Garantizar que 'key' es válido
+                // Verificar que el valor ha cambiado y no es undefined
+                if (original[typedKey] !== updated[typedKey] && updated[typedKey] !== undefined) {
+                    diff[typedKey] = updated[typedKey];
+                }
+        }
+        return diff;
+    };
+
     const v_reg$ = useVuelidate(rulesRegData, registerForm);
     const submitRegister = ():void => {
         // Manejar el envío del formulario de registro aquí
-        console.log('Datos de registro:', JSON.stringify(registerForm.value));       
+        console.log('Datos de registro:', JSON.stringify(registerForm.value));
+        const differences = buildDiffObject(props.EXISTING_ADMIN.value, registerForm.value);    
+        emit("sendData", differences);
         closeRegister();
     }
     //emit
     const passChangePopup: Ref<boolean> = ref(false);
-    const emit = defineEmits(["flag"]);
+    const emit = defineEmits(["flag","sendData"]);
     const closeRegister = ():void => {
             emit("flag", passChangePopup.value);
     }

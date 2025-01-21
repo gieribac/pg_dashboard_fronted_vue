@@ -15,16 +15,19 @@
   import PostService from '../services/PostService';
   import DecodedToken from '../interfaces/DecodedToken';
   import AdminRegData from '../interfaces/AdminRegData';
+import AdminService from '../services/AdminService';
  
   const decodedToken: DecodedToken | null = getDecodedToken();
   let posts = ref<Dashboard_Data[]>([]);
- 
+  //service for dashboards in FormD
   const service = new PostService();
   posts = service.getPosts();
   onMounted(async () => {
     await service.fetchAll();
   })
 
+  //service for sendDataAdmin
+  const serviceAdmin = new AdminService;
   //consts
   const destroyUserPopup1: Ref<boolean> = ref(false);
   const patchUpdatePopup1: Ref<boolean> = ref(false);
@@ -150,13 +153,31 @@
         }    
       }       
   }
-
+  const sendDataUpdateAdmin = async (data:  Partial<AdminRegData>): Promise<void> => {
+    try {
+      const success = await serviceAdmin.updateAdmin(data);    
+      if (success) {
+        Object.assign(dataAdmin,success.map);
+        triggerAlert(true,'datos actualizados');
+        return
+      } else {
+        triggerAlert(false,'Fallido: actualizar datos');
+      }
+    } catch (e) {
+      console.log('Error al Cargar datos de Admin: ',e);
+      triggerAlert(false,'Error al Cargar datos');
+    }
+  }
 
 </script>
 <template>
   <div class="cont__main">
     <h2 >Carga de dashboards</h2>
-    <FormD :flag="dForm"  @sendDash="sendDash" :flagWatchData="false" />
+    <FormD 
+      :flag="dForm"  
+      @sendDash="sendDash" 
+      :flagWatchData="false" 
+    />
     <h2>Edición de dashboards</h2>
     <FormD
       v-for="(post, index) in posts"
@@ -167,8 +188,14 @@
       @sendDash="updateDash"
       @deleteDash="destroyDash"
     />
-    <ChangePass @flag="fChange" v-if="passChangePopup1" />
-    <PatchUpdate @flag="fPatch" v-if="patchUpdatePopup1" :EXISTING_ADMIN="dataAdmin" />
+    <ChangePass @flag="fChange" 
+      v-if="passChangePopup1" 
+    />
+    <PatchUpdate @flag="fPatch" 
+      v-if="patchUpdatePopup1" 
+      :EXISTING_ADMIN="ref(dataAdmin)" 
+      @sendData="sendDataUpdateAdmin"
+    />
     <DestroyUser @flag="fDestroy" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>

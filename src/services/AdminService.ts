@@ -5,7 +5,8 @@ import DecodedToken from '../interfaces/DecodedToken';
 import { isTokenValid } from './authHelpers'; 
 import { useRouter } from 'vue-router'; // Para redirigir
 import { returnToken } from './authHelpers';
-const url: string = 'http://127.0.0.1:8000/api/admin/';
+import BaseAdminData from '../interfaces/BaseAdminData';
+const url: string = 'http://127.0.0.1:8000/api/admin';
 export default class AdminService {
     private admins: Ref<AdminRegData[]>;
     private router = useRouter();
@@ -115,16 +116,16 @@ export default class AdminService {
     }
 
     // Método para actualizar un admin (updatePartial)
-    async updateAdmin(updateData: Partial<AdminRegData>, id: string): Promise<AdminRegData | null> {
+    async updateAdmin(data: Partial<AdminRegData>): Promise<BaseAdminData | null> {
         try {
             if (!isTokenValid()) {
                 this.routerToMain(); // Redirige al usuario a la página de inicio
                 throw new Error('Token vencido');
             }
             const decodedToken: DecodedToken | null = getDecodedToken();
-            let data: Partial<AdminRegData>;
+            let id: string | undefined = undefined;
             if (decodedToken !== null) {
-               data = Object.assign(updateData, {author: decodedToken.name})
+                id = decodedToken.sub;
             } else {
                 throw new Error('token decoded null');
             }
@@ -145,13 +146,9 @@ export default class AdminService {
             if (!response.ok) {
                 throw new Error(`Error updating admin: ${response.status}`);
             }
-            const updatedAdmin: AdminRegData = await response.json();
-            // Actualizar el post localmente
-            const index = this.admins.value.findIndex(admin => admin.id === id);
-            if (index !== -1) {
-                this.admins.value[index] = { ...this.admins.value[index], ...updateData };
-            }
-            return updatedAdmin;
+            const responseJson = await response.json();
+            console.log(responseJson)
+            return responseJson;
         } catch (e) {
             console.error(e);
             return null;
