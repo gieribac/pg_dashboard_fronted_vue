@@ -2,9 +2,7 @@ import { ref, Ref } from 'vue';
 import Cookies from 'js-cookie'; // Importar js-cookie
 import AdminLoginData from '../interfaces/AdminLoginData';
 
-const loginUrl: string = 'http://127.0.0.1:8000/api/adminlog/login';
-const logoutUrl: string = 'http://127.0.0.1:8000/api/adminlog/logout';
-const meUrl: string = 'http://127.0.0.1:8000/api/adminlog/me';
+const urlAdminAuth: string = 'http://127.0.0.1:8000/api/adminlog/';
 
 export default class AuthService {
     private jwt: Ref<string>;
@@ -26,7 +24,7 @@ export default class AuthService {
     async login(obj: AdminLoginData): Promise<boolean> {
         try {
             console.log('login')
-            const response = await (await fetch(loginUrl, {
+            const response = await (await fetch( `${urlAdminAuth}login`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -48,7 +46,7 @@ export default class AuthService {
         } catch (e) {
             this.error.value = 'Login Failed';
             return false;
-        }
+        }  
     }
 
     // Método para guardar el token en una cookie
@@ -79,7 +77,7 @@ export default class AuthService {
                 return false;
             }
 
-            const response = await fetch(logoutUrl, {
+            const response = await fetch( `${urlAdminAuth}logout`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -113,7 +111,7 @@ export default class AuthService {
                 return false;
             }
 
-            const response = await fetch(meUrl, {
+            const response = await fetch(`${urlAdminAuth}me`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -134,6 +132,33 @@ export default class AuthService {
             return true;
         } catch (e) {
             this.error.value = 'Logout Failed';
+            return false;
+        }
+    }
+
+    async changePass(obj: object): Promise<boolean> {
+        try{
+            // const token = this.getTokenFromCookie();
+            // if (!token) {
+            //     this.error.value = 'No token found';
+            //     return false;
+            // }
+            // const response = await fetch(`${urlAdminAuth}update-password`, {
+            //     method: 'PATCH',
+            //     headers: {
+            //         'Authorization': `Bearer ${token}`,
+            //         'Accept': 'application/json',
+            //     },
+            //     body: JSON.stringify(obj), 
+            // });
+            // if (!response.ok) {
+            //     this.error.value = 'Logout Failed';
+            //     return false;
+            // }
+            console.log(obj);
+            return true
+        } catch (e){
+            this.error.value = 'Change Pass Failed';
             return false;
         }
     }

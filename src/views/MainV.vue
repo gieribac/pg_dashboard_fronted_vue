@@ -8,7 +8,7 @@
   import AlertPop_up from '../components/AlertPop_up.vue';
   import SMClass from '../class/SMClass';
   import AdminRegData from '../interfaces/AdminRegData';
-  import useRegisterService from '../services/AdminService'
+  import useRegisterService from '../services/AdminService';
   import AdminLoginData from '../interfaces/AdminLoginData';
   import AuthService from '../services/AuthService';
   import { useRouter } from 'vue-router';

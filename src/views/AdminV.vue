@@ -16,6 +16,7 @@
   import DecodedToken from '../interfaces/DecodedToken';
   import AdminRegData from '../interfaces/AdminRegData';
 import AdminService from '../services/AdminService';
+import AuthService from '../services/AuthService';
  
   const decodedToken: DecodedToken | null = getDecodedToken();
   let posts = ref<Dashboard_Data[]>([]);
@@ -28,6 +29,8 @@ import AdminService from '../services/AdminService';
 
   //service for sendDataAdmin
   const serviceAdmin = new AdminService;
+   //service for sendDataChangePass
+  const serviceAdminAuth = new AuthService;
   //consts
   const destroyUserPopup1: Ref<boolean> = ref(false);
   const patchUpdatePopup1: Ref<boolean> = ref(false);
@@ -81,8 +84,12 @@ import AdminService from '../services/AdminService';
     
   };
   // Maneja el cierre de la alerta desde el hijo
-  const handleClose = () => {
+  const handleClose = async () => {
     showAlert.value = false;
+    if (sm.message === 'clave actualizada') {      
+      let response = await serviceAdminAuth.logout();
+      if (response) {fRegresar();}
+    }
   };
   const updateDash = async (data: Dashboard_Data, id: string): Promise<void> => {
     try {
@@ -168,6 +175,18 @@ import AdminService from '../services/AdminService';
       triggerAlert(false,'Error al Cargar datos');
     }
   }
+  const changeP = async (data: object): Promise<void> => {
+    try {
+      const success = await serviceAdminAuth.changePass(data);
+      if (success) {
+        triggerAlert(true,'clave actualizada');
+      } else {
+        triggerAlert(false,'error actualizando clave');
+      }
+    } catch (error) {
+      triggerAlert(false,'error: clave no actualizada');
+    }
+  }
 
 </script>
 <template>
@@ -189,6 +208,7 @@ import AdminService from '../services/AdminService';
       @deleteDash="destroyDash"
     />
     <ChangePass @flag="fChange" 
+      @datacp="changeP"
       v-if="passChangePopup1" 
     />
     <PatchUpdate @flag="fPatch" 
