@@ -1,7 +1,7 @@
 
 <script setup lang="ts">
 //componente para actualizar datos del usuario actual
-    import { ref, Ref} from 'vue';
+    import { ref, Ref, computed} from 'vue';
     import { useVuelidate } from '@vuelidate/core';
     import { required, numeric, alpha, minLength, maxLength, email, alphaNum } from '@vuelidate/validators';
     import AdminRegData from '../../interfaces/AdminRegData';
@@ -54,6 +54,11 @@ const props = withDefaults(
         emit("sendData", differences);
         closeRegister();
     }
+    // Computed properties
+    const hasNoChanges = computed((): boolean => {
+    return JSON.stringify(registerForm.value) === JSON.stringify(props.EXISTING_ADMIN.value);
+    });
+
     //emit
     const passChangePopup: Ref<boolean> = ref(false);
     const emit = defineEmits(["flag","sendData"]);
@@ -81,7 +86,7 @@ const props = withDefaults(
         <input type="text" v-model="registerForm.username"  />
         <label for="user" class="form-label">Usuario</label>
         <div class="button__container">
-          <button class="accept btn" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
+          <button class="accept btn" type="submit" :disabled="!!hasNoChanges || v_reg$.$invalid" >Aceptar</button>
           <button class="cancel" type="button" @click="closeRegister">Cancelar</button>
         </div>        
       </form>

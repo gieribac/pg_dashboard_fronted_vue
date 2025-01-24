@@ -23,24 +23,23 @@ export default class AuthService {
 
     async login(obj: AdminLoginData): Promise<boolean> {
         try {
-            console.log('login')
-            const response = await (await fetch( `${urlAdminAuth}login`, {
+            console.log(JSON.stringify(obj))
+            const response = await fetch( `${urlAdminAuth}login`, {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(obj),
-            })).json();
-
-            if ('error' in response) {
+            });
+            const responseJson = await response.json();
+            if (!response.ok) {
                 this.error.value = 'Login Failed';
                 return false;
             }
 
             // Guardar el token en una cookie
-            this.jwt.value = response.token;
-            this.setTokenInCookie(response.token);
+            this.jwt.value = responseJson.token;
+            this.setTokenInCookie(responseJson.token);
 
             return true;
         } catch (e) {
@@ -82,7 +81,8 @@ export default class AuthService {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json',
-                },
+                    'Content-Type': 'application/json',
+                },                
                 body: JSON.stringify({}), // Body vacío
             });
 
@@ -116,6 +116,7 @@ export default class AuthService {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({}), // Body vacío
             });
@@ -138,23 +139,26 @@ export default class AuthService {
 
     async changePass(obj: object): Promise<boolean> {
         try{
-            // const token = this.getTokenFromCookie();
-            // if (!token) {
-            //     this.error.value = 'No token found';
-            //     return false;
-            // }
-            // const response = await fetch(`${urlAdminAuth}update-password`, {
-            //     method: 'PATCH',
-            //     headers: {
-            //         'Authorization': `Bearer ${token}`,
-            //         'Accept': 'application/json',
-            //     },
-            //     body: JSON.stringify(obj), 
-            // });
-            // if (!response.ok) {
-            //     this.error.value = 'Logout Failed';
-            //     return false;
-            // }
+            const token = this.getTokenFromCookie();
+            if (!token) {
+                this.error.value = 'No token found';
+                return false;
+            }
+            console.log(JSON.stringify(obj));
+            console.log(token);
+            const response = await fetch(`${urlAdminAuth}updatepassword`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },                
+                body: JSON.stringify(obj), 
+            });
+            if (!response.ok) {
+                this.error.value = 'Logout Failed';
+                return false;
+            }
             console.log(obj);
             return true
         } catch (e){

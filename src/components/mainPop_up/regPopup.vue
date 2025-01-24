@@ -25,7 +25,7 @@ const rulesRegData = {
     required, alphaNum, minLength: minLength(3), maxLength: maxLength(16)
   },
   password: {
-    required,  minLength: minLength(6), maxLength: maxLength(10)
+    required,  minLength: minLength(6), maxLength: maxLength(25)
   }
 }
 // Formulario reactivo

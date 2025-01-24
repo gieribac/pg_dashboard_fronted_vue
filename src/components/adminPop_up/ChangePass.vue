@@ -14,13 +14,13 @@ interface passChangeData {
 
 const rulespassChangeDataData = {
     pass1: {
-        required,  minLength: minLength(6), maxLength: maxLength(10)
+        required,  minLength: minLength(6), maxLength: maxLength(25)
     },
     pass2: {
-        required,  minLength: minLength(6), maxLength: maxLength(10)
+        required,  minLength: minLength(6), maxLength: maxLength(25)
     },
     pass22: {
-        required,  minLength: minLength(6), maxLength: maxLength(10)
+        required,  minLength: minLength(6), maxLength: maxLength(25)
     }
 }
 
