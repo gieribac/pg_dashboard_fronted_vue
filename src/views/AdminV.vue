@@ -11,12 +11,12 @@
   import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
   import AlertPop_up from '../components/AlertPop_up.vue';
   import Dashboard_Data from '../interfaces/DashboardData';
-  import SMClass from '../class/SMClass';
   import PostService from '../services/PostService';
   import DecodedToken from '../interfaces/DecodedToken';
   import AdminRegData from '../interfaces/AdminRegData';
-import AdminService from '../services/AdminService';
-import AuthService from '../services/AuthService';
+  import AdminService from '../services/AdminService';
+  import AuthService from '../services/AuthService';
+  import TriggerAlertClass from '../class/TriggerAlertClass';
  
   const decodedToken: DecodedToken | null = getDecodedToken();
   let posts = ref<Dashboard_Data[]>([]);
@@ -29,13 +29,12 @@ import AuthService from '../services/AuthService';
 
   //service for sendDataAdmin
   const serviceAdmin = new AdminService;
-   //service for sendDataChangePass
+  //service for sendDataChangePass
   const serviceAdminAuth = new AuthService;
   //consts
   const destroyUserPopup1: Ref<boolean> = ref(false);
   const patchUpdatePopup1: Ref<boolean> = ref(false);
   const passChangePopup1: Ref<boolean> = ref(false);
-  const showAlert: Ref<boolean> = ref(false);
   const statusOA: Ref<boolean> = ref(false);
   let otorgarAutorizacion: boolean = false;
   let flag_updateDataView: boolean = false;
@@ -75,18 +74,13 @@ import AuthService from '../services/AuthService';
     passChangePopup1.value = false;
   }
 
-  // Función para montar la alerta
-  const sm = new SMClass();
-  const triggerAlert = (status_: boolean, message_: string):void => {
-    showAlert.value = true;
-    sm.status = status_;
-    sm.message = message_;
-    
-  };
+  // instancia para montar la alerta
+  const triggerAlert = new TriggerAlertClass;
+
   // Maneja el cierre de la alerta desde el hijo
   const handleClose = async () => {
-    showAlert.value = false;
-    if (sm.message === 'clave actualizada') {      
+    triggerAlert.set_showAlert(ref(false));
+    if (triggerAlert.get_sm() === 'clave actualizada' || triggerAlert.get_sm() ===  'cuenta eliminada') {      
       let response = await serviceAdminAuth.logout();
       if (response) {fRegresar();}
     }
@@ -95,32 +89,32 @@ import AuthService from '../services/AuthService';
     try {
       const service = new PostService();
       const success = await service.updatePost(data, id); 
-      showAlert.value = true;
+      triggerAlert.set_showAlert(ref(true));
       if (success) {
         updateDataView(data, id, undefined);
-        triggerAlert(true,'Dashboard Actualizado');
+        triggerAlert.set_sms(true,'Datos actualizados');
         return
       } else {
-          triggerAlert(false,'Actualizanción fallida');
+        triggerAlert.set_sms(false,'Actualizanción fallida');
       }
     } catch (e) {
       console.log('Error actualizando: ',e);
-      triggerAlert(false,'Error actualizando');
+      triggerAlert.set_sms(false,'Error actualizando');
     }
   }
   const destroyDash = async (id: string): Promise<void> => {
     try {
       const success = await service.deletePost(id); 
-      showAlert.value = true;
+      triggerAlert.set_showAlert(ref(true));
       if (success) {
-        triggerAlert(true,'Dashboard Eliminado');
+        triggerAlert.set_sms(true,'Dashboard Eliminado');
         return
       } else {
-        triggerAlert(false,'Fallido: eliminar');
+        triggerAlert.set_sms(false,'Fallido: eliminar');
       }
     } catch (e) {
       console.log('Error al eliminar: ',e);
-      triggerAlert(false,'Error al eliminar');
+      triggerAlert.set_sms(false,'Error al eliminar');
     }
   }
   const sendDash = async (data: Dashboard_Data): Promise<void> => {    
@@ -128,18 +122,18 @@ import AuthService from '../services/AuthService';
       console.log(posts.value.length)
       const success = await service.createPost(data);
       console.log(posts.value.length)
-      showAlert.value = true;
+      triggerAlert.set_showAlert(ref(true));
       if (success) {
         updateDataView(undefined, undefined, data);
         console.log(posts.value.length)
-        triggerAlert(true,'Dashboard Cargado');
+        triggerAlert.set_sms(true,'Dashboard Cargado');
         return
       } else {
-        triggerAlert(false,'Fallido: Cargar Dashboard');
+        triggerAlert.set_sms(false,'Fallido: Cargar Dashboard');
       }
     } catch (e) {
+      triggerAlert.set_sms(false,'Error al Cargar');
       console.log('Error al Cargar Dashboard: ',e);
-      triggerAlert(false,'Error al Cargar');
     }
   }
   const updateDataView = (source?: Partial<Dashboard_Data>, idBuscado?: string, data?: Dashboard_Data) : void => {    
@@ -162,29 +156,45 @@ import AuthService from '../services/AuthService';
   }
   const sendDataUpdateAdmin = async (data:  Partial<AdminRegData>): Promise<void> => {
     try {
-      const success = await serviceAdmin.updateAdmin(data);    
+      const success = await serviceAdmin.updateAdmin(data); 
+      triggerAlert.set_showAlert(ref(true));   
       if (success) {
         Object.assign(dataAdmin,success.map);
-        triggerAlert(true,'datos actualizados');
+        triggerAlert.set_sms(true,'Datos actualizados');
         return
       } else {
-        triggerAlert(false,'Fallido: actualizar datos');
+        triggerAlert.set_sms(false,'Fallido: actualizar datos');
       }
     } catch (e) {
       console.log('Error al Cargar datos de Admin: ',e);
-      triggerAlert(false,'Error al Cargar datos');
+      triggerAlert.set_sms(false,'Error al Cargar datos');
     }
   }
   const changeP = async (data: object): Promise<void> => {
     try {
       const success = await serviceAdminAuth.changePass(data);
+      triggerAlert.set_showAlert(ref(true));
       if (success) {
-        triggerAlert(true,'clave actualizada');
+        triggerAlert.set_sms(true,'clave actualizada');
       } else {
-        triggerAlert(false,'error actualizando clave');
+        triggerAlert.set_sms(false,'error actualizando clave');
       }
     } catch (error) {
-      triggerAlert(false,'error: clave no actualizada');
+      triggerAlert.set_sms(false,'error: clave no actualizada');
+    }
+  }
+
+  const delAccount = async (data: object): Promise<void> => {
+    try {
+      const success = await serviceAdminAuth.deleteAdmin(data);
+      triggerAlert.set_showAlert(ref(true));
+      if (success) {
+        triggerAlert.set_sms(true,'cuenta eliminada');
+      } else {
+        triggerAlert.set_sms(false,'error eliminando cuenta');
+      }
+    } catch (error) {
+      triggerAlert.set_sms(false,'error: cuenta no eliminada');
     }
   }
 
@@ -216,10 +226,15 @@ import AuthService from '../services/AuthService';
       :EXISTING_ADMIN="ref(dataAdmin)" 
       @sendData="sendDataUpdateAdmin"
     />
-    <DestroyUser @flag="fDestroy" v-if="destroyUserPopup1" />
+    <DestroyUser @flag="fDestroy" @datadestroy="delAccount" v-if="destroyUserPopup1" />
     <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>
-    <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
+    <AlertPop_up 
+      v-if="triggerAlert.get_showAlert()" 
+      :sm="triggerAlert.get_sm()" 
+      :smstatus="triggerAlert.get_smstatus()"
+      @close="handleClose"
+    />
 
   </div>
 

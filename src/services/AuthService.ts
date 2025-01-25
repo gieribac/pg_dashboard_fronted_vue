@@ -1,13 +1,19 @@
 import { ref, Ref } from 'vue';
 import Cookies from 'js-cookie'; // Importar js-cookie
 import AdminLoginData from '../interfaces/AdminLoginData';
-
+import { getDecodedToken, isTokenValid, returnToken } from './authHelpers';
+import { useRouter } from 'vue-router'; // Para redirigir
+import DecodedToken from '../interfaces/DecodedToken';
 const urlAdminAuth: string = 'http://127.0.0.1:8000/api/adminlog/';
+
 
 export default class AuthService {
     private jwt: Ref<string>;
     private error: Ref<string>;
-
+    private router = useRouter();
+    private routerToMain(){
+        this.router.push({ name: 'MainV' });
+    }
     constructor() {
         this.jwt = ref('');
         this.error = ref('');
@@ -118,7 +124,7 @@ export default class AuthService {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({}), // Body vacío
+                body: JSON.stringify({}), // Body  vacío
             });
 
             if (!response.ok) {
@@ -163,6 +169,45 @@ export default class AuthService {
             return true
         } catch (e){
             this.error.value = 'Change Pass Failed';
+            return false;
+        }
+    }
+        //Método para eliminar un admin (destroy)
+    async deleteAdmin(data: object): Promise<boolean | null> {
+        try {
+            if (!isTokenValid()) {
+                this.routerToMain(); // Redirige al usuario a l a página de inicio
+                throw new Error('Token vencido');
+            }
+            const decodedToken: DecodedToken | null = getDecodedToken();
+            let id: string | undefined = undefined;
+            if (decodedToken !== null) {
+                id = decodedToken.sub;
+            } else {
+                throw new Error('token decoded null');
+            }
+            const token: string = returnToken();
+            const response: Response = await fetch(`${urlAdminAuth}${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },                
+                body: JSON.stringify(data)
+            });
+            if (response.status === 401) {
+                this.router.push({ name: 'MainV' }); // Redirige si el token es inválido desde el servidor
+                throw new Error('No autorizado. Token inválido o vencido');
+              }
+
+            if (!response.ok) {
+                throw new Error(`Error deleting admin: ${response.status}`);
+            }
+            console.log(JSON.stringify(data));
+            return true;
+        } catch (e) {
+            console.error(e);
             return false;
         }
     }

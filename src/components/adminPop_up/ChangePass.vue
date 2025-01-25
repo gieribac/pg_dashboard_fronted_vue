@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang=   "ts">
 
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength } from '@vuelidate/validators';

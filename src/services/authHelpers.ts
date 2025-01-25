@@ -6,7 +6,6 @@ const authService = new AuthService();
 export function returnToken(): string {
   const token: string | undefined = authService.getTokenFromCookie();
   if (typeof(token) === 'string') {
-    console.log('returnToken ')
     return token;
   }
   return 'token undefined';

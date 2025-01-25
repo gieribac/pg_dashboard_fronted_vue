@@ -2,11 +2,10 @@ import { ref, Ref } from 'vue';
 import { getDecodedToken } from './authHelpers';
 import AdminRegData from '../interfaces/AdminRegData';
 import DecodedToken from '../interfaces/DecodedToken';
-import { isTokenValid } from './authHelpers'; 
+import { isTokenValid, returnToken  } from './authHelpers'; 
 import { useRouter } from 'vue-router'; // Para redirigir
-import { returnToken } from './authHelpers';
 import BaseAdminData from '../interfaces/BaseAdminData';
-const url: string = 'http://127.0.0.1:8000/api/admin';
+const url: string = 'http://127.0.0.1:8000/api/admin/';
 export default class AdminService {
     private admins: Ref<AdminRegData[]>;
     private router = useRouter();
@@ -83,37 +82,6 @@ export default class AdminService {
             success,
         };
     } 
-   
-    //Método para eliminar un admin (destroy)
-    async deleteAdmin(id: string): Promise<boolean | null> {
-        try {
-            if (!isTokenValid()) {
-                this.routerToMain(); // Redirige al usuario a la página de inicio
-                throw new Error('Token vencido');
-            }
-            const token: string = returnToken();
-            const response: Response = await fetch(`${url}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (response.status === 401) {
-                this.router.push({ name: 'MainV' }); // Redirige si el token es inválido desde el servidor
-                throw new Error('No autorizado. Token inválido o vencido');
-              }
-
-            if (!response.ok) {
-                throw new Error(`Error deleting admin: ${response.status}`);
-            }
-            // Remover el post localmente
-            this.admins.value = this.admins.value.filter(admin => admin.id !== id);
-            return true;
-        } catch (e) {
-            console.error(e);
-            return false;
-        }
-    }
 
     // Método para actualizar un admin (updatePartial)
     async updateAdmin(data: Partial<AdminRegData>): Promise<BaseAdminData | null> {

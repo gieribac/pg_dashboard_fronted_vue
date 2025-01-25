@@ -3,46 +3,30 @@
   import { ref, Ref} from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import AlertPop_up from '../components/AlertPop_up.vue';
-  import SMClass from '../class/SMClass';
   import AuthService from '../services/AuthService';
-  import ShortMessageAP from '../interfaces/ShortMessageAP';
-  const sm: ShortMessageAP = new SMClass();
-  const showAlert: Ref<boolean> = ref(false);
-  let flagLogoutToMainV: boolean = false;
-  let flagLoginToAdminV: boolean = false;
+  import TriggerAlertClass from '../class/TriggerAlertClass';
   const router = useRouter();
   const handleClose = () => {
-    showAlert.value = false; 
-    if (flagLogoutToMainV){
-      router.push({ name: 'MainV' });
-      return
-    }
-    if (flagLoginToAdminV){
-      router.push({ name: 'AdminV'});
-      return
-    }
+    triggerAlert.set_showAlert(ref(false));
+    triggerAlert.get_smstatus() ? router.push({ name: 'MainV' }): router.push({ name: 'AdminV'});
+
   };
 
-  // Función para montar la alerta
-  const triggerAlert = (status_: boolean, message_: string):void => {
-    showAlert.value = true;
-    sm.status = status_;
-    sm.message = message_;
-  };
+  // instancia para montar la alerta
+  const triggerAlert = new TriggerAlertClass;
 
   const logOut = async () => {
     try {
       const auth = new AuthService();
       const exito = await auth.logout();
-      console.log('logout: '+exito)
+      triggerAlert.set_showAlert(ref(true));
       if (exito) {
-        flagLogoutToMainV = true;
-        triggerAlert(true, "Sesión cerrada");
+        triggerAlert.set_sms(true, "Sesión cerrada");
       } else {
-        triggerAlert(false, "Fallo cerrando sesión");
+        triggerAlert.set_sms(false, "Fallo cerrando sesión");
       }
     } catch (e) {
-      triggerAlert(false, "Fallo cerrando sesión");
+      triggerAlert.set_sms(false, "Fallo cerrando sesión");
     }
   }
 
@@ -70,7 +54,6 @@
   }
 
   //emits
-
   const emit = defineEmits(listEmmits);
 
   // Estados reactivos para los valores de los emmits
@@ -186,8 +169,12 @@ console.log('adminmain: '+prop.adminMain)
       </li>
     </ul>
   </div>
-  <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
-      
+  <AlertPop_up 
+    v-if="triggerAlert.get_showAlert()" 
+    :sm="triggerAlert.get_sm()" 
+    :smstatus="triggerAlert.get_smstatus()"
+    @close="handleClose"
+  />      
 </template>
 
 <style scoped>

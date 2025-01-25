@@ -2,7 +2,7 @@
 
 import { useVuelidate } from '@vuelidate/core';
 import { required, minLength, maxLength } from '@vuelidate/validators';
-import { ref, Ref } from 'vue';
+import { ref, Ref, computed } from 'vue';
 
 const destroyUserPopup: Ref<boolean> = ref(false);
 
@@ -13,10 +13,10 @@ interface passChangeData {
 
 const rulespassChangeDataData = {
   pass1: {
-    required, minLength: minLength(6), maxLength: maxLength(10)
+    required, minLength: minLength(6), maxLength: maxLength(25)
   },
   pass2: {
-    required, minLength: minLength(6), maxLength: maxLength(10)
+    required, minLength: minLength(6), maxLength: maxLength(25)
   }
 }
 
@@ -31,26 +31,30 @@ const v_passChange$ = useVuelidate(rulespassChangeDataData, passChangeDataForm);
 
 //metodos 
 //emit
-const emit = defineEmits(["flag"])
+const emit = defineEmits(["flag","datadestroy"])
 const close_passChangePop_up = (): void => {
   emit("flag", destroyUserPopup.value)
 }
 
 const submitPassChange = (): void => {
   console.log('Datos de registro:', JSON.stringify(passChangeDataForm.value));
+  emit("datadestroy", {password: passChangeDataForm.value.pass1});
 }
 
+const validatorPass = computed(()=>{
+  return passChangeDataForm.value.pass1 !== passChangeDataForm.value.pass2;
+})
 </script>
 
 <template>
   <div class="overlay">
   <div class="popup">
-    <h3 class="">Eliminar administrador actual</h3>
+    <h3 class="">Eliminar cuenta</h3>
     <form class="" @submit.prevent="submitPassChange">
-      <input type="" placeholder="Contraseña" v-model="passChangeDataForm.pass1" />
-      <input type="" placeholder="Confirmar contraseña" v-model="passChangeDataForm.pass2" required />
+      <input type="password" placeholder="Contraseña" v-model="passChangeDataForm.pass1" />
+      <input type="password" placeholder="Confirmar contraseña" v-model="passChangeDataForm.pass2" required />
       <div class="button__container">
-        <button class="accept" type="submit" :disabled="v_passChange$.$invalid">Aceptar</button>
+        <button class="accept btn" type="submit" :disabled="v_passChange$.$invalid || validatorPass">Aceptar</button>
         <button class="cancel" type="button" @click="close_passChangePop_up">Cancelar</button>
       </div>
     </form>
@@ -131,7 +135,10 @@ const submitPassChange = (): void => {
 .popup .button__container .cancel:hover {
   background-color: #3066be;
 }
-
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 /* Estilos responsivos */
 @media (max-width: 1200px) {
   .popup .button__container {

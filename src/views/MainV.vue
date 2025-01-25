@@ -6,27 +6,19 @@
   import PostService from '../services/PostService';
   import DashboardMain from '../components/DashboardMain.vue';
   import AlertPop_up from '../components/AlertPop_up.vue';
-  import SMClass from '../class/SMClass';
   import AdminRegData from '../interfaces/AdminRegData';
-  import useRegisterService from '../services/AdminService';
+  import TriggerAlertClass from '../class/TriggerAlertClass';
   import AdminLoginData from '../interfaces/AdminLoginData';
   import AuthService from '../services/AuthService';
   import { useRouter } from 'vue-router';
-import AdminService from '../services/AdminService';
+  import AdminService from '../services/AdminService';
   const router = useRouter();
   let lg_: AdminLoginData = {username:'', password: ''};
-  let flagLoginToAdminV = false;
-  const sm = new SMClass();
-  const showAlert: Ref<boolean> = ref(false);
   const handleClose = () => {
-    showAlert.value = false;
-    if (flagLoginToAdminV){router.push({name:'AdminV'})}
-  };
-
-  const triggerAlert = (status_: boolean, message_: string):void => {
-    showAlert.value = true;
-    sm.status = status_;
-    sm.message = message_;
+    triggerAlert.set_showAlert(ref(false));
+    if (triggerAlert.get_sm() === 'Sesión iniciada'){
+      router.push({name:'AdminV'})
+    }
   };
 
     // Función para montar la alerta
@@ -34,16 +26,15 @@ import AdminService from '../services/AdminService';
     try {    
       const auth = new AuthService();
       const success = await auth.login(datalogin);
-      showAlert.value = true;
+      triggerAlert.set_showAlert(ref(true));
       if (success) {
-        flagLoginToAdminV = true;
-        triggerAlert(true,'Sesión iniciada');
+        triggerAlert.set_sms(true,'Sesión iniciada');
         return
       } else {
-        triggerAlert(false,'Error en login');
+        triggerAlert.set_sms(false,'Error en login');
       }
     } catch (e) {
-        triggerAlert(false,'Login fallido');
+        triggerAlert.set_sms(false,'Login fallido');
     }
   };
 
@@ -52,16 +43,15 @@ import AdminService from '../services/AdminService';
       const adminService = new AdminService();
       const { registerUser, success } = await adminService.useRegisterService();
       await registerUser(rg);
-      showAlert.value = true;
-      sm.status = success.value;
+      triggerAlert.set_showAlert(ref(true));
       if (success.value) {
-        sm.message = 'Registro exitoso';
+        triggerAlert.set_sms(true,'Registro exitoso');
       } else {
-        sm.message = 'Registro fallido';
+        triggerAlert.set_sms(false,'Registro fallido');
       }
     } catch (e) {
       console.log(e);
-      sm.message = 'Registro falló';
+      triggerAlert.set_sms(false,'Registro falló');
     }
   };
 
@@ -69,12 +59,12 @@ import AdminService from '../services/AdminService';
   const posts = service.getPosts();
   onMounted(async () => {
     await service.fetchAll();
-
   })
 
   const showRegisterPopup: Ref<boolean> = ref(false);
   const showLoginPopup: Ref<boolean> = ref(false);
-
+  const triggerAlert = new TriggerAlertClass;
+  triggerAlert.set_showAlert(ref(true))
   // Métodos para abrir y cerrar cada pop-up
   const registerPop_up = ():void => {
     showRegisterPopup.value = true;
@@ -102,6 +92,7 @@ import AdminService from '../services/AdminService';
   const showInfo = ():void => {
     alert("mostranfo información")
   };
+  
 </script>
 
 <template>
@@ -113,8 +104,13 @@ import AdminService from '../services/AdminService';
       :key="index"   
       :EXISTING_DASHBOARD="post"
     />
-  <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
-
+    <AlertPop_up 
+      v-if="triggerAlert.get_showAlert()" 
+      :sm="triggerAlert.get_sm()" 
+      :smstatus="triggerAlert.get_smstatus()"
+      @close="handleClose"
+    />
+    
 </template>
 <style scoped>
 

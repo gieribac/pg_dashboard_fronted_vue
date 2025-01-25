@@ -20,18 +20,17 @@ triggerAlert(true, "exito");
 <AlertPop_up v-if="showAlert" :shortMessage="sm"  @close="handleClose"/>
 -->
 <script setup lang="ts">
-  import { ref, onMounted, onUnmounted, PropType } from 'vue';
-  import ShortMessageAP from '../interfaces/ShortMessageAP';
+  import { ref, onMounted, onUnmounted } from 'vue';
   
-
   // Reactive state for the visibility of the alert
   const visible = ref(true);
 
   const emit = defineEmits(['close']);
 
   // Cierre manual
-  const closeAlert = () => {//0-> solo cerrar, main-> cerrar y redirigir a MainV, admin -> redirigir a AdminV
+  const closeAlert = () => {
     emit('close',true);
+    console.log("closea")
   };
 
   // Cierre automático
@@ -45,20 +44,23 @@ triggerAlert(true, "exito");
     clearTimeout(timeoutId);
   });
 
-  const prop = defineProps({
-    shortMessage: {
-      type:  Object as PropType<ShortMessageAP>,
-      required: true
-    }
-  })
-
+  const prop = withDefaults(
+  defineProps<{
+    sm: string;
+    smstatus: boolean;
+  }>(),
+  {
+    sm: '',
+    smstatus: false
+  }
+);
 </script>
   <template>
     <div class="overlay" v-if="visible">
     <div class="alert">
       <div class="alert__content">
-        <span class="alert__icon material-symbols-outlined" :class="prop.shortMessage.status ? 'check_circle': 'error'">{{prop.shortMessage.status ? "check_circle": "error"}}</span>
-        <p class="alert__message">{{prop.shortMessage.message}}</p>
+        <span class="alert__icon material-symbols-outlined" :class="prop.smstatus ? 'check_circle': 'error'">{{prop.smstatus ? "check_circle": "error"}}</span>
+        <p class="alert__message">{{prop.sm}}</p>
         <button class="alert__button" @click="closeAlert">Aceptar</button>
         
       </div>
