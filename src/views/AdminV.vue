@@ -8,7 +8,8 @@
   import PatchUpdate from '../components/adminPop_up/PatchUpdate.vue';
   import FormD from '../components/FormD.vue';
   import MenuComponent from '../components/MenuComponent.vue';
-  import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';
+  import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';  
+  import MAData from '../interfaces/MAData';
   import AlertPop_up from '../components/AlertPop_up.vue';
   import Dashboard_Data from '../interfaces/DashboardData';
   import PostService from '../services/PostService';
@@ -17,21 +18,28 @@
   import AdminService from '../services/AdminService';
   import AuthService from '../services/AuthService';
   import TriggerAlertClass from '../class/TriggerAlertClass';
+  import AuthorizedService from '../services/AuthorizedService';
  
-  const decodedToken: DecodedToken | null = getDecodedToken();
-  let posts = ref<Dashboard_Data[]>([]);
-  //service for dashboards in FormD
+  
+     //service for dashboards in FormD
   const service = new PostService();
+  let posts = ref<Dashboard_Data[]>([]);
   posts = service.getPosts();
+  //service for authorizations
+  const serviceMAData = new AuthorizedService;
+  let authorizations = ref<MAData[]>([]);
+  authorizations = serviceMAData.getAuthoriationsData();
   onMounted(async () => {
     await service.fetchAll();
+    await serviceMAData.fetchAll();
   })
-
   //service for sendDataAdmin
   const serviceAdmin = new AdminService;
   //service for sendDataChangePass
   const serviceAdminAuth = new AuthService;
+  
   //consts
+  const decodedToken: DecodedToken | null = getDecodedToken();
   const destroyUserPopup1: Ref<boolean> = ref(false);
   const patchUpdatePopup1: Ref<boolean> = ref(false);
   const passChangePopup1: Ref<boolean> = ref(false);
@@ -198,6 +206,21 @@
     }
   }
 
+  const sendAuthorization = async (data: MAData): Promise<void> => {
+    try {
+      const success = await serviceMAData.regAuthorization(data);
+      triggerAlert.set_showAlert(ref(true));
+      if (success) {
+        triggerAlert.set_sms(true,'autorización cargada');
+      } else {
+        triggerAlert.set_sms(false,'error cargando autorización');
+      }
+    } catch (error) {
+      triggerAlert.set_sms(false,'error: autorización no cargada');
+    }
+  }
+  
+
 </script>
 <template>
   <div class="cont__main">
@@ -227,7 +250,7 @@
       @sendData="sendDataUpdateAdmin"
     />
     <DestroyUser @flag="fDestroy" @datadestroy="delAccount" v-if="destroyUserPopup1" />
-    <ManageAuthorizations @flag="fAutorizar" v-if="statusOA"/>
+    <ManageAuthorizations :AUTHORIZATIONS="ref(authorizations)" @flag="fAutorizar" @dataMA="sendAuthorization" v-if="statusOA"/>
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>
     <AlertPop_up 
       v-if="triggerAlert.get_showAlert()" 

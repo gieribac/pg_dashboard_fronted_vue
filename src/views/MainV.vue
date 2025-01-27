@@ -9,6 +9,7 @@
   import AdminRegData from '../interfaces/AdminRegData';
   import TriggerAlertClass from '../class/TriggerAlertClass';
   import AdminLoginData from '../interfaces/AdminLoginData';
+  
   import AuthService from '../services/AuthService';
   import { useRouter } from 'vue-router';
   import AdminService from '../services/AdminService';
@@ -64,7 +65,6 @@
   const showRegisterPopup: Ref<boolean> = ref(false);
   const showLoginPopup: Ref<boolean> = ref(false);
   const triggerAlert = new TriggerAlertClass;
-  triggerAlert.set_showAlert(ref(true))
   // Métodos para abrir y cerrar cada pop-up
   const registerPop_up = ():void => {
     showRegisterPopup.value = true;

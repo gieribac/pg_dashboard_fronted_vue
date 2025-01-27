@@ -74,7 +74,6 @@
       emit(listEmmits[2], m.value[2]);
     }
   };
-console.log('adminmain: '+prop.adminMain)
 </script>
 
 <template>
@@ -152,7 +151,7 @@ console.log('adminmain: '+prop.adminMain)
         </div>
       </li>
       <li v-show="prop.adminMain" @click="alClick(8)">
-        <p v-show="showParagraph[9]">Autorizar nuevo</p>
+        <p v-show="showParagraph[9]">Autorizaciones</p>
         <div class="li_container" @mouseenter="handleMouseEnter(9)" @mouseleave="handleMouseLeave(9)">
           <span class="material-symbols-outlined">
             settings_accessibility
