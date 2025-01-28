@@ -8,8 +8,7 @@
   import AlertPop_up from '../components/AlertPop_up.vue';
   import AdminRegData from '../interfaces/AdminRegData';
   import TriggerAlertClass from '../class/TriggerAlertClass';
-  import AdminLoginData from '../interfaces/AdminLoginData';
-  
+  import AdminLoginData from '../interfaces/AdminLoginData';  
   import AuthService from '../services/AuthService';
   import { useRouter } from 'vue-router';
   import AdminService from '../services/AdminService';

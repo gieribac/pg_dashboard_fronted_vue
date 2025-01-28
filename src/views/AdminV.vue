@@ -18,8 +18,7 @@
   import AdminService from '../services/AdminService';
   import AuthService from '../services/AuthService';
   import TriggerAlertClass from '../class/TriggerAlertClass';
-  import AuthorizedService from '../services/AuthorizedService';
- 
+  import AuthorizedService from '../services/AuthorizedService'; 
   
      //service for dashboards in FormD
   const service = new PostService();
@@ -30,10 +29,12 @@
   let authorizations = ref<MAData[]>([]);
   authorizations = serviceMAData.getAuthoriationsData();
   onMounted(async () => {
-    await service.fetchAll();
-    await serviceMAData.fetchAll();
+    await Promise.all([
+      service.fetchAll(),
+      serviceMAData.fetchAll()
+    ]);
   })
-  //service for sendDataAdmin
+  //service for sendDataAdmin 
   const serviceAdmin = new AdminService;
   //service for sendDataChangePass
   const serviceAdminAuth = new AuthService;
@@ -220,6 +221,19 @@
     }
   }
   
+  const removeAuthorization = async (id: number): Promise<void> => {
+    try {
+      const success = await serviceMAData.deleteAuthorization(id);
+      triggerAlert.set_showAlert(ref(true));
+      if (success) {
+        triggerAlert.set_sms(true,'autorización eliminada');
+      } else {
+        triggerAlert.set_sms(false,'error eliminando autorización');
+      }
+    } catch (error) {
+      triggerAlert.set_sms(false,'error: autorización no eliminada');
+    }
+  }
 
 </script>
 <template>
@@ -250,7 +264,13 @@
       @sendData="sendDataUpdateAdmin"
     />
     <DestroyUser @flag="fDestroy" @datadestroy="delAccount" v-if="destroyUserPopup1" />
-    <ManageAuthorizations :AUTHORIZATIONS="ref(authorizations)" @flag="fAutorizar" @dataMA="sendAuthorization" v-if="statusOA"/>
+    <ManageAuthorizations 
+      v-if="statusOA"
+      :AUTHORIZATIONS="ref(authorizations)" 
+      @flag="fAutorizar" 
+      @dataMA="sendAuthorization" 
+      @delMA="removeAuthorization"
+    />
     <MenuComponent :adminMain="otorgarAutorizacion" @eRegresar="fRegresar" @eChange="fChange" @ePatch="fPatch" @eDestroy="fDestroy" @eAutorizar="fAutorizar"/>
     <AlertPop_up 
       v-if="triggerAlert.get_showAlert()" 

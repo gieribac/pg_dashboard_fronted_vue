@@ -35,7 +35,7 @@
 
     //metodos 
     //emit
-    const emit = defineEmits(["flag","dataMA"])
+    const emit = defineEmits(["flag","dataMA","delMA"])
     const close_MAPop_up = (): void => {
         emit("flag", true)
     }
@@ -46,9 +46,11 @@
         emit("dataMA",DataForm.value);
         
     }
-    const submitDestroyA = (id_: string | number | undefined): void => {
-
-        console.log('submitDestroyA', id_);
+    const submitDestroyA = (id_?:  number ): void => { 
+        if (id_){
+            emit("delMA",id_)
+            console.log('submitDestroyA', id_); 
+        }                    
     }
 
     const formatDate = (originalDate: string): string => {
@@ -68,7 +70,6 @@
         });
     });
  
-     
 </script>
 
 <template>

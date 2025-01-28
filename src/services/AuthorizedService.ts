@@ -41,7 +41,6 @@ class AuthorizedService { //clase de servicio para consumo de api
             const json = await response.json();
             const jsonData: MAData[]  = json.data;
             this.authoriationsData.value = jsonData;
-            console.log(this.authoriationsData.value)
         } catch (e){
             console.log(e)
         }
@@ -71,43 +70,44 @@ class AuthorizedService { //clase de servicio para consumo de api
                 const errorData = await response.json();
                 throw new Error(errorData.message || 'Error en el registro.');
             } 
+            const responseJson = await response.json();
+            this.authoriationsData.value.push(responseJson.data);
             return true;   
         } catch (err) {
             console.log(err);
             return false;
         } 
     };
-
        
-        //Método para eliminar un admin (destroy)
-        async deleteAuthorization(id: string): Promise<boolean> {
-            try {
-                if (!isTokenValid()) {
-                    this.routerToMain(); // Redirige al usuario a la página de inicio
-                    throw new Error('Token vencido');
-                }
-                const token: string = returnToken();
-                const response: Response = await fetch(`${url}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                if (response.status === 401) {
-                    this.router.push({ name: 'MainV' }); // Redirige si el token es inválido desde el servidor
-                    throw new Error('No autorizado. Token inválido o vencido');
-                  }
-    
-                if (!response.ok) {
-                    throw new Error(`Error deleting data: ${response.status}`);
-                }
-                // Remover el data localmente
-                this.authoriationsData.value = this.authoriationsData.value.filter(authorization => authorization.id !== id);
-                return true;
-            } catch (e) {
-                console.error(e);
-                return false;
+    //Método para eliminar un admin (destroy)
+    async deleteAuthorization(id: number): Promise<boolean> {
+        try {
+            if (!isTokenValid()) {
+                this.routerToMain(); // Redirige al usuario a la página de inicio
+                throw new Error('Token vencido');
             }
+            const token: string = returnToken();
+            const response: Response = await fetch(`${url}${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.status === 401) {
+                this.router.push({ name: 'MainV' }); // Redirige si el token es inválido desde el servidor
+                throw new Error('No autorizado. Token inválido o vencido');
+                }
+
+            if (!response.ok) {
+                throw new Error(`Error deleting data: ${response.status}`);
+            }
+            // Remover el data localmente
+            this.authoriationsData.value = this.authoriationsData.value.filter(authorization => authorization.id !== id);
+            return true;
+        } catch (e) {
+            console.error(e);
+            return false;
         }
+    }
 }
 export default AuthorizedService;

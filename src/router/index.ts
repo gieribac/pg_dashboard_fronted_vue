@@ -29,7 +29,7 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
   // Verifica si la ruta requiere autenticación
-  if (to.meta.requiresAuth && !isTokenValid()) {
+  if (to.name === 'AdminV' && !isTokenValid()) {
     next({ name: 'MainV' }); // Redirige al usuario a la página de login si no está autenticado
   } else {
     next(); // Permite la navegación

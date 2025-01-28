@@ -5,6 +5,7 @@
   import AlertPop_up from '../components/AlertPop_up.vue';
   import AuthService from '../services/AuthService';
   import TriggerAlertClass from '../class/TriggerAlertClass';
+  import { isTokenValid } from '../services/authHelpers';
   const router = useRouter();
   const handleClose = () => {
     triggerAlert.set_showAlert(ref(false));
@@ -64,6 +65,10 @@
 
   // Función para emitir emmits
   const alClick = (num: number): void => {
+    if (num === 0 && isTokenValid()) {
+      router.push({ name: 'AdminV' });
+      return
+    }
     emit(listEmmits[num], m.value[num])
   };
 
