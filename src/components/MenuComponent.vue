@@ -9,16 +9,17 @@
   const router = useRouter();
   const handleClose = () => {
     triggerAlert.set_showAlert(ref(false));
-    triggerAlert.get_smstatus() ? router.push({ name: 'MainV' }): router.push({ name: 'AdminV'});
+    triggerAlert.get_smstatus() ? router.push({ name: 'AdminV' }): router.push({ name: 'MainV' });
 
   };
 
   // instancia para montar la alerta
   const triggerAlert = new TriggerAlertClass;
+  // instancia para verificar sesion 
+  const auth = new AuthService();
 
   const logOut = async () => {
-    try {
-      const auth = new AuthService();
+    try {      
       const exito = await auth.logout();
       triggerAlert.set_showAlert(ref(true));
       if (exito) {
@@ -64,11 +65,13 @@
   const isOpen: Ref<boolean> = ref(false);
 
   // Función para emitir emmits
-  const alClick = (num: number): void => {
-    if (num === 0 && isTokenValid()) {
+  const alClick = async (num: number): Promise<void>=> {
+    const isSessionAvailable = await auth.me();
+    if (num === 0 && isSessionAvailable) {      
       router.push({ name: 'AdminV' });
       return
     }
+    console.log(listEmmits[num])
     emit(listEmmits[num], m.value[num])
   };
 

@@ -25,8 +25,9 @@ class PostService {
     async fetchAll(): Promise<void> {
         try {
             const response: Response = await fetch(url);
-            const json: Dashboard_Data[] = await response.json();
-            this.posts.value = json;
+            const json= await response.json();
+            const data: Dashboard_Data[] = json.data;
+            this.posts.value = data;
         } catch (e) {
             console.error('Error fetching posts: ', e);
         }

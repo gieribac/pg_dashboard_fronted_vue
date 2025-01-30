@@ -59,6 +59,7 @@
   const posts = service.getPosts();
   onMounted(async () => {
     await service.fetchAll();
+    console.log(service.getPosts())
   })
 
   const showRegisterPopup: Ref<boolean> = ref(false);
@@ -75,6 +76,7 @@
   };
 
   const loginPop_up = ():void => {
+    console.log('loginp')
     showLoginPopup.value = true;
     showRegisterPopup.value = false;
   };
@@ -91,7 +93,7 @@
   const showInfo = ():void => {
     alert("mostranfo información")
   };
-  
+  console.log(posts)
 </script>
 
 <template>

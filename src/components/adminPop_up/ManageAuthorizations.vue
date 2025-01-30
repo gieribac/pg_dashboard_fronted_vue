@@ -22,12 +22,16 @@
         },
         email: {
             required, email
+        },
+        main:{
+            required
         }
     }
 
     const DataForm = ref<MAData>({
         no_doc: '',
-        email: ''
+        email: '',
+        main: false
     })
 
     // crear el objeto de validación
@@ -82,9 +86,14 @@
     </div>
 
     <!-- Pestaña 1 -->
-    <form class="popup__pest form form-aut" v-show="!activeTab" @submit.prevent="submitManageA">
+    <form class="popup__pest formMA form-aut" v-show="!activeTab" @submit.prevent="submitManageA">
         <input type="text" placeholder="No. documento" v-model="DataForm.no_doc" />
         <input type="email" placeholder="E-mail" v-model="DataForm.email" required />
+        <div class="form-control--inputcheckbox"><p>Admin Principal: </p>
+            <div class="container-inputcheckbox">
+                <input  class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="DataForm.main" >
+            </div>            
+        </div>
         <div class="button__container">
         <button class="accept" type="submit" :disabled="v_passChange$.$invalid" >Aceptar</button>
         
@@ -103,6 +112,11 @@
                     <p>{{authorization.email}}</p>
                     <p><strong>Fecha creado: </strong></p>
                     <p>{{authorization.created_at}}</p>
+                    <p><strong>Fecha creado: </strong></p>
+                    <p>{{authorization.created_at}}</p>
+                    <p class="p-span"><strong>Principal: </strong>
+                        {{authorization.main ? "Sí" : "No"}}
+                    </p>                   
                 </details>
                 <span class="destroy-authorization material-symbols-outlined" 
                     @click="submitDestroyA(authorization.id)">
@@ -134,25 +148,25 @@
     }
 
     .popup__tabs {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #ddd;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ddd;
     }
 
     .popup__tab {
-    flex: 1;
-    text-align: center;
-    padding: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    border-bottom: 2px solid transparent;
-    transition: all 0.3s;
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+        font-weight: bold;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s;
     }
 
     .popup__tab.active {
-    border-bottom: 2px solid #090c9b;
-    color: #090c9b;
+        border-bottom: 2px solid #090c9b;
+        color: #090c9b;
     }
 
     .popup {
@@ -173,11 +187,11 @@
         min-height: 31%;
         justify-content: center;
     }
-    .popup form {
+    .popup .formMA {
         width: 100%;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        align-items: flex-start;
     }
 
     .popup form input {
@@ -274,8 +288,27 @@
         display: block;
     }
     .accept:disabled {
-    cursor: not-allowed; 
-    opacity: 0.6; 
+        cursor: not-allowed; 
+        opacity: 0.6; 
+    }
+    .form-control--inputcheckbox {
+        width: 100%;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+    }
+    .form-control--inputcheckbox p {
+        width: 100px;
+        margin: 0 0 0 8px;
+        text-align: left;        
+    }
+    .form-control--inputcheckbox .container-inputcheckbox {
+        margin-left: 0;
+        text-align: left;
+    }
+    .form-control--inputcheckbox .container-inputcheckbox .inputcheckbox{
+        position: relative;
+        top: 1px;
     }
     @media (max-width: 768px) {
         .popup .button__container {

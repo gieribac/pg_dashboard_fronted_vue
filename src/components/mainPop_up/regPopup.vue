@@ -1,9 +1,9 @@
 <script setup lang='ts'>
 import { Ref, ref } from 'vue';
 import { required, numeric,  minLength, maxLength, email, alphaNum, helpers } from '@vuelidate/validators';
-import AdminRegData from '../../interfaces/AdminRegData';
 import { useVuelidate } from '@vuelidate/core';
 import {EMPTY_ADMIN} from '../constantInfo/empty_admin';
+import AdminRegData from '../../interfaces/AdminRegData';
 // objetos con las reglas de validación
 // Regla personalizada para aceptar letras y espacios
 const alphaSpaces = helpers.withMessage(
@@ -29,7 +29,8 @@ const rulesRegData = {
   }
 }
 // Formulario reactivo
-const registerForm = ref<AdminRegData>(EMPTY_ADMIN);
+type ValidatedAdmin = AdminRegData & { password: string };
+const registerForm = ref<ValidatedAdmin>(EMPTY_ADMIN);
 
 // crear el objeto de validación
 const v_reg$ = useVuelidate(rulesRegData, registerForm);

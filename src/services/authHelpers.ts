@@ -40,7 +40,7 @@ export function isTokenValid(): boolean {
     const payloadBase64 = token.split('.')[1];
     const decodedPayload = JSON.parse(atob(payloadBase64));
 
-    // Verifica la fecha de expiración del token
+    // Verifica la fecha de expiración del token    
     const currentTime = Math.floor(Date.now() / 1000); // Tiempo actual en segundos
     return decodedPayload.exp > currentTime;
   } catch (e) {

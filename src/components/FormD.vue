@@ -88,9 +88,7 @@ const props = withDefaults(
     watch(
         () =>props.flagWatchData,
         (newVal) => {
-            console.log("Form updated:", newVal);
-            // Por ejemplo, podrías validar los datos aquí:
-            
+            console.log("Form updated:", newVal);           
             if (!props.flag){
                 dashboardDataForm.value = {...props.EXISTING_DASHBOARD.value};
             }
@@ -106,34 +104,26 @@ const props = withDefaults(
         <div class="main_div form">
             <form class="container__main__s1" @submit.prevent="handleSubmit">
                 <div class="form_div">
-                    <label for="title" class="form-label">Titulo</label>
-                    <input v-if="props.flag" class="form-control  form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
-                    <input v-if="!props.flag" class="form-control form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
+                    <label for="title" class="form-label">Titulo</label>                    
+                    <input  class="form-control form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
                 </div>
                 <div class="form_div">
-                    <label for="descripcion" class="form-label">Observaciones</label>
-                    <textarea  v-if="props.flag" name="descripcion" class="form-control  form__input " id="descripcion" rows="3"
-                        v-model="dashboardDataForm.description"></textarea>
-                    <textarea v-if="!props.flag" name="descripcion"  class="form-control form__input " id="descripcion" rows="3"
+                    <label for="descripcion" class="form-label">Observaciones</label>                    
+                    <textarea  name="descripcion"  class="form-control form__input " id="descripcion" rows="3"
                     v-model="dashboardDataForm.description"></textarea>
                 </div>
                 <div class="form_div">
-                    <label for="lugar" class="form-label ">Lugar</label>
-                    <input v-if="props.flag" class="form-control " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
-                    <input v-if="!props.flag" class="form-control form__input " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
+                    <label for="lugar" class="form-label ">Lugar</label>                    
+                    <input class="form-control form__input " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
                 </div>
                 <div class="form_div">
-                    <label for="url" class="form-label">Dashboard (URL)</label>
-                    <input  v-if="props.flag" class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
-                    <input  v-if="!props.flag" class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
+                    <label for="url" class="form-label">Dashboard (URL)</label>                    
+                    <input class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
                 </div>
                 <div class="form_div ">
                     <label for="checkbox" class="form-label" name="checkbox">Publicar</label>
                     <div class="form-control--inputcheckbox form-control ">
-                        <input v-if="props.flag" class="inputcheckbox " type="checkbox" id="" name="checkbox" 
-                            v-model="dashboardDataForm.post">
-                        <input v-if="!props.flag" class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="dashboardDataForm.post" 
-                        >
+                        <input  class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="dashboardDataForm.post" >
                     </div>
                 </div>
                 <div class="container-button">
@@ -156,7 +146,6 @@ const props = withDefaults(
                         </button>
                     </div>
                 </div>
-
             </form>
         </div>
     </div>
