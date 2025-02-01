@@ -61,11 +61,11 @@ const submitPassChange = ():void => {
      <div class="popup">
       <h3>Cambio de Contraseña</h3>
       <form @submit.prevent="submitPassChange">
-        <input type="password" placeholder="Contraseña actual" v-model="passChangeDataForm.pass1"  />
-        <input type="password" placeholder="Contraseña nueva" v-model="passChangeDataForm.pass2" required />
-        <input type="password" placeholder="Confirmar contraseña nueva" v-model="passChangeDataForm.pass22" required />
+        <input id="pass1" type="password" placeholder="Contraseña actual" v-model="passChangeDataForm.pass1"  />
+        <input id="pass2" type="password" placeholder="Contraseña nueva" v-model="passChangeDataForm.pass2" required />
+        <input id="pass22" type="password" placeholder="Confirmar contraseña nueva" v-model="passChangeDataForm.pass22" required />
         <div class="button__container">
-          <button class="accept btn" type="submit" :disabled="v_passChange$.$invalid ||auxValidatePass">Aceptar</button>
+          <button id="cp_submit" class="accept btn" type="submit" :disabled="v_passChange$.$invalid ||auxValidatePass">Aceptar</button>
           <button class="cancel" type="button" @click="close_passChangePop_up">Cancelar</button>  
         </div>        
       </form>

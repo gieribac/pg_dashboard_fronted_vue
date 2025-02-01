@@ -81,22 +81,21 @@
         <div class="popup"> 
     <!-- Contenedor de pestañas -->
     <div class="popup__tabs">
-        <div class="popup__tab" :class="{active: !activeTab}" @click="activeTab=!activeTab">Autorizar</div>
-        <div class="popup__tab" :class="{active: activeTab}" @click="activeTab=!activeTab" >Autorizaciones</div>
+        <div id="ma_tab1" class="popup__tab" :class="{active: !activeTab}" @click="activeTab=!activeTab">Autorizar</div>
+        <div id="ma_tab2" class="popup__tab" :class="{active: activeTab}" @click="activeTab=!activeTab" >Autorizaciones</div>
     </div>
 
     <!-- Pestaña 1 -->
     <form class="popup__pest formMA form-aut" v-show="!activeTab" @submit.prevent="submitManageA">
-        <input type="text" placeholder="No. documento" v-model="DataForm.no_doc" />
-        <input type="email" placeholder="E-mail" v-model="DataForm.email" required />
+        <input id="ma_doc" type="text" placeholder="No. documento" v-model="DataForm.no_doc" />
+        <input id="ma_email" type="email" placeholder="E-mail" v-model="DataForm.email" required />
         <div class="form-control--inputcheckbox"><p>Admin Principal: </p>
             <div class="container-inputcheckbox">
-                <input  class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="DataForm.main" >
+                <input  class="inputcheckbox" type="checkbox" id="ma_check" name="checkbox" v-model="DataForm.main" >
             </div>            
         </div>
         <div class="button__container">
-        <button class="accept" type="submit" :disabled="v_passChange$.$invalid" >Aceptar</button>
-        
+        <button id="ma_submit" class="accept" type="submit" :disabled="v_passChange$.$invalid" >Aceptar</button>        
         </div>
     </form>
 
@@ -127,7 +126,7 @@
         </div>
     </div>
     <div class="button__container">
-    <button class="cancel" type="button" @click="close_MAPop_up">Cancelar</button></div>
+    <button id="ma_cancel" class="cancel" type="button" @click="close_MAPop_up">Cancelar</button></div>
     </div>
 </div>
 </template>

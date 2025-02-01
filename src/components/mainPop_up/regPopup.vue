@@ -53,14 +53,14 @@ let m:Ref<Boolean> = ref(false);
   <div class="popup">
       <h3>Registro</h3>
       <form @submit.prevent="submitRegister">
-        <input type="text" placeholder="Nombre" v-model="registerForm.name"  />
-        <input type="text" id="NoDoc" placeholder="No. documento" v-model="registerForm.no_doc">
-        <input type="email" placeholder="E-mail" v-model="registerForm.email"  />
-        <input type="text" placeholder="Usuario" v-model="registerForm.username"  />
-        <input type="password" placeholder="Contraseña" v-model="registerForm.password" required />
+        <input id="reg_name" type="text" placeholder="Nombre" v-model="registerForm.name"  />
+        <input id="reg_doc" type="text" placeholder="No. documento" v-model="registerForm.no_doc">
+        <input id="reg_email" type="email" placeholder="E-mail" v-model="registerForm.email"  />
+        <input id="reg_user" type="text" placeholder="Usuario" v-model="registerForm.username"  />
+        <input id="reg_pass" type="password" placeholder="Contraseña" v-model="registerForm.password" required />
         <div class="button__container">
-          <button class="accept" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
-          <button class="cancel" type="button" @click="alClick">Cancelar</button>
+          <button id="reg_submit" class="accept" type="submit" :disabled="v_reg$.$invalid" >Aceptar</button>
+          <button id="reg_cancel" class="cancel" type="button" @click="alClick">Cancelar</button>
         </div>        
       </form>
     </div>

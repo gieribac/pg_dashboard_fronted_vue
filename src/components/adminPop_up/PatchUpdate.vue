@@ -73,20 +73,20 @@ const props = withDefaults(
       <h3>Actualizar Administrador</h3>
       <form @submit.prevent="submitRegister">
         
-        <input type="text" v-model="registerForm.name"  />
+        <input id="up_name" type="text" v-model="registerForm.name"  />
         <label for="name" class="form-label">Nombre </label>
 
 
-        <input type="text" id="NoDoc"  v-model="registerForm.no_doc">
+        <input id="up_doc" type="text" v-model="registerForm.no_doc">
         
         <label for="no_doc" class="form-label">No. documento </label>
-        <input type="email" v-model="registerForm.email"  />
+        <input id="up_email" type="email" v-model="registerForm.email"  />
         <label for="email" class="form-label">Email </label>
         
-        <input type="text" v-model="registerForm.username"  />
+        <input id="up_user" type="text" v-model="registerForm.username"  />
         <label for="user" class="form-label">Usuario</label>
         <div class="button__container">
-          <button class="accept btn" type="submit" :disabled="!!hasNoChanges || v_reg$.$invalid" >Aceptar</button>
+          <button id="up_submit" class="accept btn" type="submit" :disabled="!!hasNoChanges || v_reg$.$invalid" >Aceptar</button>
           <button class="cancel" type="button" @click="closeRegister">Cancelar</button>
         </div>        
       </form>

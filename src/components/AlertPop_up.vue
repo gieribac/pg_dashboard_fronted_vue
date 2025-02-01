@@ -29,6 +29,7 @@ triggerAlert(true, "exito");
 
   // Cierre manual
   const closeAlert = () => {
+    console.log(prop.sm)
     emit('close',true);
     console.log("closea")
   };

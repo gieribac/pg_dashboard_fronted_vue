@@ -35,10 +35,10 @@
   <div class="popup">
       <h3>Iniciar Sesión</h3>
       <form @submit.prevent="submitLogin">
-        <input type="text" placeholder="Username" v-model="loginForm.username"  />
-        <input type="password" placeholder="Contraseña" v-model="loginForm.password" required />
+        <input id="lg_user" type="text" placeholder="Username" v-model="loginForm.username"  />
+        <input id="lg_pass" type="password" placeholder="Contraseña" v-model="loginForm.password" required />
         <div class="button__container">
-          <button class="accept" type="submit" :disabled="v_login$.$invalid">Aceptar</button>
+          <button id="lg_submit" class="accept" type="submit" :disabled="v_login$.$invalid">Aceptar</button>
           <button class="cancel" type="button" @click="alClick">Cancelar</button>  
         </div>        
       </form>

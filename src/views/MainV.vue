@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { ref, Ref, onMounted } from 'vue';
   import MenuComponent from '../components/MenuComponent.vue';
-  import RegPopup from '../components/mainPop_up/RegPopup.vue';
-  import LoginPopup from '../components/mainPop_up/LoginPopup.vue';
+  import RegPopup from '../components/mainPop_up/regPopup.vue';
+  import LoginPopup from '../components/mainPop_up/loginPopup.vue';
   import PostService from '../services/PostService';
   import DashboardMain from '../components/DashboardMain.vue';
   import AlertPop_up from '../components/AlertPop_up.vue';

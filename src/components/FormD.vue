@@ -35,10 +35,10 @@ const props = withDefaults(
     const dashboardDataForm = ref<Dashboard_Data>({ ...initialData.value });
     // Validation rules
     const rulesDashboardData = {
-    title: { required, minLength: minLength(3), maxLength: maxLength(30) },
-    description: { required, maxLength: maxLength(2000) },
-    place: { required, minLength: minLength(3), maxLength: maxLength(30) },
-    urlDashboard: { required, maxLength: maxLength(400) },
+        title: { required, minLength: minLength(3), maxLength: maxLength(30) },
+        description: { required, maxLength: maxLength(2000) },
+        place: { required, minLength: minLength(3), maxLength: maxLength(30) },
+        urlDashboard: { required, maxLength: maxLength(400) },
     };
     
     // Initialize validation
@@ -102,36 +102,36 @@ const props = withDefaults(
         <p v-if="props.flag">Diligenciar todos los campos</p>
         <p v-if="!props.flag">Actualizar lo necesario</p>
         <div class="main_div form">
-            <form class="container__main__s1" @submit.prevent="handleSubmit">
+            <form class="form_ container__main__s1" @submit.prevent="handleSubmit">
                 <div class="form_div">
                     <label for="title" class="form-label">Titulo</label>                    
-                    <input  class="form-control form__input" type="text" name="title" id="title" v-model="dashboardDataForm.title">
+                    <input class="formd_title form-control form__input" type="text" name="title" v-model="dashboardDataForm.title">
                 </div>
                 <div class="form_div">
                     <label for="descripcion" class="form-label">Observaciones</label>                    
-                    <textarea  name="descripcion"  class="form-control form__input " id="descripcion" rows="3"
+                    <textarea  name="descripcion"  class="formd_descripcion form-control form__input " rows="3"
                     v-model="dashboardDataForm.description"></textarea>
                 </div>
                 <div class="form_div">
                     <label for="lugar" class="form-label ">Lugar</label>                    
-                    <input class="form-control form__input " type="text" name="lugar" id="lugar" v-model="dashboardDataForm.place">
+                    <input class="formd_lugar form-control form__input " type="text" name="lugar" v-model="dashboardDataForm.place">
                 </div>
                 <div class="form_div">
                     <label for="url" class="form-label">Dashboard (URL)</label>                    
-                    <input class="form-control form__input " type="text" name="url" id="url" v-model="dashboardDataForm.urlDashboard">
+                    <input class="formd_url form-control form__input " type="text" name="url" v-model="dashboardDataForm.urlDashboard">
                 </div>
                 <div class="form_div ">
                     <label for="checkbox" class="form-label" name="checkbox">Publicar</label>
                     <div class="form-control--inputcheckbox form-control ">
-                        <input  class="inputcheckbox" type="checkbox" id="checkbox" name="checkbox" v-model="dashboardDataForm.post" >
+                        <input  class="formd_checkbox inputcheckbox" type="checkbox" name="checkbox" v-model="dashboardDataForm.post" >
                     </div>
                 </div>
                 <div class="container-button">
                     <div class="button">
-                        <button v-if="props.flag" type="submit" class="btn btn-primary" :disabled="v_reg$.$invalid">
+                        <button formd_submit v-if="props.flag" type="submit" class="btn btn-primary formd_submit" :disabled="v_reg$.$invalid">
                             <span class="material-symbols-outlined">upload</span>Cargar
                         </button>
-                        <button v-if="!props.flag" type="submit" class="btn btn-primary" :disabled="!!hasNoChanges || v_reg$.$invalid">
+                        <button v-if="!props.flag" type="submit" class="btn btn-primary formd_submit" :disabled="!!hasNoChanges || v_reg$.$invalid">
                             <span class="material-symbols-outlined">upload</span>Cargar
                         </button>
                     </div>
@@ -141,7 +141,7 @@ const props = withDefaults(
                         </button>
                     </div>
                     <div class="button" v-if="!props.flag">
-                        <button class="btn btn-primary delete" type="button" @click="handleDestroyDashboard">
+                        <button class="btn btn-primary form_delete delete" type="button" @click="handleDestroyDashboard">
                             <span class="material-symbols-outlined">delete</span>Eliminar
                         </button>
                     </div>

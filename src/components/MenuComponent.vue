@@ -5,7 +5,6 @@
   import AlertPop_up from '../components/AlertPop_up.vue';
   import AuthService from '../services/AuthService';
   import TriggerAlertClass from '../class/TriggerAlertClass';
-  import { isTokenValid } from '../services/authHelpers';
   const router = useRouter();
   const handleClose = () => {
     triggerAlert.set_showAlert(ref(false));
@@ -86,13 +85,13 @@
 
 <template>
   <div class="dropdown">
-    <button class="hamburguesa" @click="toggleDropdown">
+    <button id="menu" class="hamburguesa" @click="toggleDropdown">
       <span class="material-symbols-outlined">
         menu
       </span>
     </button>
     <ul v-if="isOpen && menu" class="dropdown-content">
-      <li @click="alClick(0)">
+      <li id="entry" @click="alClick(0)" >
         <p v-show="showParagraph[0]">Ingresar</p>
         <div class="li_container" @mouseenter="handleMouseEnter(0)" @mouseleave="handleMouseLeave(0)" >
           <span class="material-symbols-outlined">
@@ -100,7 +99,7 @@
           </span>
         </div>       
       </li>
-      <li @click="alClick(1)">
+      <li id="register" @click="alClick(1)" >
         <p v-show="showParagraph[1]">Registrarse</p>
         <div class="li_container" @mouseenter="handleMouseEnter(1)" @mouseleave="handleMouseLeave(1)">
           <span class="material-symbols-outlined">
@@ -108,7 +107,7 @@
           </span>
         </div>
       </li>
-      <li @click="logOut()">
+      <li id="logout" @click="logOut()">
         <p v-show="showParagraph[3]">Cerrar Sesion</p>
         <div class="li_container" @mouseenter="handleMouseEnter(3)" @mouseleave="handleMouseLeave(3)">
           <span class="material-symbols-outlined">
@@ -116,7 +115,7 @@
           </span>
         </div>
       </li>
-      <li @click="alClick(3)">
+      <li id="info" @click="alClick(3)">
         <p v-show="showParagraph[4]">Información</p>
         <div class="li_container" @mouseenter="handleMouseEnter(4)" @mouseleave="handleMouseLeave(4)">
           <span class="material-symbols-outlined">
@@ -126,7 +125,7 @@
       </li>
     </ul>
     <ul v-if="isOpen && !menu" class="dropdown-content">
-      <li @click="alClick(4)">
+      <li id="gohome" @click="alClick(4)">
         <p v-show="showParagraph[5]">Regresar a inicio</p>
         <div class="li_container" @mouseenter="handleMouseEnter(5)" @mouseleave="handleMouseLeave(5)" >
           <span class="material-symbols-outlined">
@@ -134,7 +133,7 @@
           </span>
         </div>       
       </li>
-      <li @click="alClick(5)">
+      <li id="changepass" @click="alClick(5)">
         <p v-show="showParagraph[6]">Cambiar contraseña</p>
         <div class="li_container" @mouseenter="handleMouseEnter(6)" @mouseleave="handleMouseLeave(6)">
           <span class="material-symbols-outlined">
@@ -142,7 +141,7 @@
           </span>
         </div>
       </li>
-      <li @click="alClick(6)">
+      <li id="updateadmin" @click="alClick(6)">
         <p v-show="showParagraph[7]">Actualizar administrador</p>
         <div class="li_container" @mouseenter="handleMouseEnter(7)" @mouseleave="handleMouseLeave(7)">
           <span class="material-symbols-outlined">
@@ -150,7 +149,7 @@
           </span>
         </div>
       </li>
-      <li @click="alClick(7)">
+      <li id="deleteaccount" @click="alClick(7)">
         <p v-show="showParagraph[8]">Eliminar cuenta</p>
         <div class="li_container" @mouseenter="handleMouseEnter(8)" @mouseleave="handleMouseLeave(8)">
           <span class="material-symbols-outlined">
@@ -158,7 +157,7 @@
           </span>
         </div>
       </li>
-      <li v-show="prop.adminMain" @click="alClick(8)">
+      <li id="authorizations" v-show="prop.adminMain" @click="alClick(8)">
         <p v-show="showParagraph[9]">Autorizaciones</p>
         <div class="li_container" @mouseenter="handleMouseEnter(9)" @mouseleave="handleMouseLeave(9)">
           <span class="material-symbols-outlined">
@@ -166,7 +165,7 @@
           </span>
         </div>
       </li>
-      <li @click="logOut()">
+      <li id="logout" @click="logOut()">
         <p v-show="showParagraph[10]">Cerrar sesión</p>
         <div class="li_container" @mouseenter="handleMouseEnter(10)" @mouseleave="handleMouseLeave(10)">
           <span class="material-symbols-outlined">
