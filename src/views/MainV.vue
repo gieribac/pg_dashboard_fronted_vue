@@ -1,8 +1,8 @@
 <script setup lang="ts">
   import { ref, Ref, onMounted } from 'vue';
   import MenuComponent from '../components/MenuComponent.vue';
-  import RegPopup from '../components/mainPop_up/regPopup.vue';
-  import LoginPopup from '../components/mainPop_up/loginPopup.vue';
+  import RegPopup from '../components/mainPop_up/RegPopup.vue';
+  import LoginPopup from '../components/mainPop_up/LoginPopup.vue';
   import PostService from '../services/PostService';
   import DashboardMain from '../components/DashboardMain.vue';
   import AlertPop_up from '../components/AlertPop_up.vue';
@@ -16,7 +16,11 @@
   let lg_: AdminLoginData = {username:'', password: ''};
   const handleClose = () => {
     triggerAlert.set_showAlert(ref(false));
+    console.log(triggerAlert.get_sm())
+    console.log(triggerAlert.get_smstatus())
+    console.log(triggerAlert.get_sm() === 'Sesión iniciada');
     if (triggerAlert.get_sm() === 'Sesión iniciada'){
+      
       router.push({name:'AdminV'})
     }
   };
@@ -38,7 +42,7 @@
     }
   };
 
-  const triggerAlertRg = async (rg: AdminRegData) => {
+  const register = async (rg: AdminRegData) => {
     try {
       const adminService = new AdminService();
       const { registerUser, success } = await adminService.useRegisterService();
@@ -98,7 +102,7 @@
 
 <template>
   <MenuComponent @in="loginPop_up" @rg="registerPop_up" @cl="closed" @info="showInfo" :datalogin="lg_"/>
-  <RegPopup @pd="closeRegisterPop_up" @rgd="triggerAlertRg" v-if="showRegisterPopup" class="popup"/>
+  <RegPopup @pd="closeRegisterPop_up" @rgd="register" v-if="showRegisterPopup" class="popup"/>
   <LoginPopup @pd="closeLoginPop_up" @lg="login" v-if="showLoginPopup" class="popup"/>
   <DashboardMain
       v-for="(post, index) in posts"

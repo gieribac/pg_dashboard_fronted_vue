@@ -29,7 +29,8 @@ export default class AuthService {
 
     async login(obj: AdminLoginData): Promise<boolean> {
         try {
-            console.log(JSON.stringify(obj))
+            console.log(JSON.stringify(obj));
+            console.log(this.getTokenFromCookie());
             const response = await fetch( `${urlAdminAuth}login`, {
                 method: 'POST',
                 headers: {
@@ -110,8 +111,9 @@ export default class AuthService {
 
     async me(): Promise<boolean> {
         try {
+
             const token = this.getTokenFromCookie();
-            
+            console.log('token'+token);
             if (!token) {
                 this.error.value = 'No token found';
                 return false;
@@ -120,22 +122,18 @@ export default class AuthService {
             const response = await fetch(`${urlAdminAuth}me`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({}), // Body  vacío
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             if (!response.ok) {
                 this.error.value = 'Logout Failed';
+                console.log('Logout Failed')
+                // Eliminar el token en memoria y en la cookie
+                this.jwt.value = '';
+                this.clearTokenFromCookie();
                 return false;
             }
-
-            // Eliminar el token en memoria y en la cookie
-            this.jwt.value = '';
-            this.clearTokenFromCookie();
-
             return true;
         } catch (e) {
             this.error.value = 'Logout Failed';

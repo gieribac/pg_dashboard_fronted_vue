@@ -24,7 +24,7 @@
     emit("lg", loginForm.value);
   };
 
-  const emit = defineEmits(["pd","lg"])
+  const emit = defineEmits(["pd","lg"]);
   const alClick = ():void => {
     emit("pd", m);
   }

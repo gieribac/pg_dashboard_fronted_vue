@@ -9,7 +9,7 @@ describe("Test E2E para Proyecto Vue 3", () => {
         no_doc: "123456",
         email: "admin1@example.com",
         username: "adminUser1",
-        password: "Pass123456"
+        password: "123456"
       };
   
       admin2 = {
@@ -17,7 +17,7 @@ describe("Test E2E para Proyecto Vue 3", () => {
         no_doc: "654321",
         email: "admin2@example.com",
         username: "adminUser2",
-        password: "Pass654321"
+        password: "654321"
       };
   
       admin3 = {
@@ -25,7 +25,7 @@ describe("Test E2E para Proyecto Vue 3", () => {
         no_doc: "789123",
         email: "admin3@example.com",
         username: "adminUser3",
-        password: "Pass789123"
+        password: "789123"
       };
     });
 
@@ -44,14 +44,30 @@ describe("Test E2E para Proyecto Vue 3", () => {
         cy.get("#reg_pass").type(admin1.password);
         cy.get("#reg_submit").click();
 
-        // 3. Iniciar sesión como admin1        
-        cy.get("#menu").click();
+        // 3. Iniciar sesión como admin1  
+        cy.intercept("POST", "http://127.0.0.1:8000/api/adminlog/login").as("loginRequest");
         cy.get("#entry").click();
         cy.get("#lg_user").type(admin1.username);
         cy.get("#lg_pass").type(admin1.password);
         cy.get("#lg_submit").click();
+        cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
+        cy.get("#btn-alert").should("be.visible").click();
+        cy.url().should("include", "/AdminV");
+    });
+    it("Debe navegar a admin", () => { 
+        c
+        cy.visit("http://localhost:5173/AdminV");
+        cy.get("#menu").click();
+        cy.get("#changepass").click();
+        cy.get("#pass1").type(admin1.password);
+        cy.get("#pass2").type(newPassword);
+        cy.get("#pass22").type(newPassword);
+        cy.get("#cp_submit").click();
+        admin1.password = newPassword; // Actualizar contraseña en variable
 
+    });
         // 4. Cambiar contraseña
+    it("Debe navegar a ", () => { 
         cy.visit("http://localhost:5173/AdminV");
         cy.get("#menu").click();
         cy.get("#changepass").click();

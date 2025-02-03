@@ -62,7 +62,7 @@ triggerAlert(true, "exito");
       <div class="alert__content">
         <span class="alert__icon material-symbols-outlined" :class="prop.smstatus ? 'check_circle': 'error'">{{prop.smstatus ? "check_circle": "error"}}</span>
         <p class="alert__message">{{prop.sm}}</p>
-        <button class="alert__button" @click="closeAlert">Aceptar</button>
+        <button id="btn-alert" class="alert__button" @click="closeAlert">Aceptar</button>
         
       </div>
     </div>

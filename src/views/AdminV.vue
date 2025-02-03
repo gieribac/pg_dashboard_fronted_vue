@@ -89,7 +89,8 @@
   // Maneja el cierre de la alerta desde el hijo
   const handleClose = async () => {
     triggerAlert.set_showAlert(ref(false));
-    if (triggerAlert.get_sm() === 'clave actualizada' || triggerAlert.get_sm() ===  'cuenta eliminada') {      
+    const flag_to_main: boolean = ['clave actualizada', 'cuenta eliminada'].includes(triggerAlert.get_sm());
+    if (flag_to_main) {      
       let response = await serviceAdminAuth.logout();
       if (response) {fRegresar();}
     }

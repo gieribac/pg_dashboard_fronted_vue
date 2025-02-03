@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { listEmmits } from '../components/constantInfo/listEmmits';
-  import { ref, Ref} from 'vue';
+  import { onMounted, ref, Ref} from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   import AlertPop_up from '../components/AlertPop_up.vue';
   import AuthService from '../services/AuthService';
@@ -11,6 +11,9 @@
     triggerAlert.get_smstatus() ? router.push({ name: 'AdminV' }): router.push({ name: 'MainV' });
 
   };
+  onMounted(()=> {
+    menu = useRoute().name ==='MainV';
+  });
 
   // instancia para montar la alerta
   const triggerAlert = new TriggerAlertClass;
@@ -40,7 +43,7 @@
   });
 
   //estado para version del menu
-  const menu: Boolean = useRoute().name ==='MainV';
+  let menu: boolean = false;
   //estados reactivos para controlar la visibilidad de parrafos del menu
   const showParagraph = ref(Array(9).fill(false));
 
@@ -65,10 +68,14 @@
 
   // Función para emitir emmits
   const alClick = async (num: number): Promise<void>=> {
-    const isSessionAvailable = await auth.me();
-    if (num === 0 && isSessionAvailable) {      
-      router.push({ name: 'AdminV' });
-      return
+    
+    if (num === 0) { 
+      const isSessionAvailable = await auth.me();      
+      console.log(isSessionAvailable);
+      if (isSessionAvailable ) {
+        router.push({ name: 'AdminV' })
+        return
+      }   
     }
     console.log(listEmmits[num])
     emit(listEmmits[num], m.value[num])
