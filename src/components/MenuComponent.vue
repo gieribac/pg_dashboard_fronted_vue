@@ -6,10 +6,14 @@
   import AuthService from '../services/AuthService';
   import TriggerAlertClass from '../class/TriggerAlertClass';
   const router = useRouter();
-  const handleClose = () => {
+  const fRegresar = () : void => {
+    router.push({ name: 'MainV' });
+  }
+  const handleClose = () : void => {
     triggerAlert.set_showAlert(ref(false));
-    triggerAlert.get_smstatus() ? router.push({ name: 'AdminV' }): router.push({ name: 'MainV' });
-
+    if (triggerAlert.get_sm() === 'Sesión cerrada') {
+      fRegresar();
+    }
   };
   onMounted(()=> {
     menu = useRoute().name ==='MainV';

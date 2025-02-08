@@ -12,13 +12,13 @@ const props = withDefaults(
   defineProps<{
     flag: boolean;//true is form1, false is form2
     EXISTING_DASHBOARD?: Ref<Dashboard_Data>;
-    flagWatchData: boolean;
+    flagWatchData: Ref<boolean>;
 
   }>(),
   {
     flag: false, // Por defecto, la bandera es false
     EXISTING_DASHBOARD: () => ref<Dashboard_Data>(EMPTY_DASHBOARD) as Ref<Dashboard_Data>, // Por defecto, el objeto es EMPTY_DASHBOARD
-    flagWatchData: false,
+    flagWatchData: () => ref<boolean>(false),
   }
 );
 
@@ -86,7 +86,7 @@ const props = withDefaults(
         emit("deleteDash", props.EXISTING_DASHBOARD.value.id);
     };
     watch(
-        () =>props.flagWatchData,
+        () =>props.flagWatchData.value,
         (newVal) => {
             console.log("Form updated:", newVal);           
             if (!props.flag){

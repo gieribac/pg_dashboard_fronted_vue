@@ -1,3 +1,7 @@
+Cypress.Cookies.defaults({
+    preserve: true
+  });
+
 describe("Test E2E para Proyecto Vue 3", () => {
     let admin1, admin2, admin3;
     let newPassword = "NuevoPass123";
@@ -35,16 +39,20 @@ describe("Test E2E para Proyecto Vue 3", () => {
         cy.visit("http://localhost:5173/MainV");
 
         // 2. Registrar admin1
-        cy.get("#menu").click();
-        cy.get("#register").click();
-        cy.get("#reg_name").type(admin1.name);
-        cy.get("#reg_doc").type(admin1.no_doc);
-        cy.get("#reg_email").type(admin1.email);
-        cy.get("#reg_user").type(admin1.username);
-        cy.get("#reg_pass").type(admin1.password);
-        cy.get("#reg_submit").click();
+        // cy.intercept("POST", "http://127.0.0.1:8000/api/admin/").as("registerRequest");
+        // cy.get("#menu").click();
+        // cy.get("#register").click();
+        // cy.get("#reg_name").type(admin1.name);
+        // cy.get("#reg_doc").type(admin1.no_doc);
+        // cy.get("#reg_email").type(admin1.email);
+        // cy.get("#reg_user").type(admin1.username);
+        // cy.get("#reg_pass").type(admin1.password);
+        // cy.get("#reg_submit").click();
+        // cy.wait("@registerRequest").its("response.statusCode").should("eq", 201);
+        // cy.get("#btn-alert").should("be.visible").click();
 
         // 3. Iniciar sesión como admin1  
+        cy.get("#menu").click();
         cy.intercept("POST", "http://127.0.0.1:8000/api/adminlog/login").as("loginRequest");
         cy.get("#entry").click();
         cy.get("#lg_user").type(admin1.username);
@@ -52,17 +60,32 @@ describe("Test E2E para Proyecto Vue 3", () => {
         cy.get("#lg_submit").click();
         cy.wait("@loginRequest").its("response.statusCode").should("eq", 200);
         cy.get("#btn-alert").should("be.visible").click();
-        cy.url().should("include", "/AdminV");
-    });
-    it("Debe navegar a admin", () => { 
-        c
+        // cy.url().should("include", "/AdminV");
         cy.visit("http://localhost:5173/AdminV");
-        cy.get("#menu").click();
+        cy.intercept("PATCH", "http://127.0.0.1:8000/api/adminlog/updatepassword").as("updatepasswordRequest");
+        cy.url().should("include", "/AdminV");
+        cy.get("#menu").should("be.visible").click();
         cy.get("#changepass").click();
         cy.get("#pass1").type(admin1.password);
         cy.get("#pass2").type(newPassword);
         cy.get("#pass22").type(newPassword);
         cy.get("#cp_submit").click();
+        cy.wait("@updatepasswordRequest").its("response.statusCode").should("eq", 200);
+        admin1.password = newPassword; // Actualizar contraseña en variable
+    });
+    it("Debe navegar a admin", () => { 
+        
+        
+        cy.visit("http://localhost:5173/AdminV");
+        cy.intercept("PATCH", "http://127.0.0.1:8000/api/adminlog/updatepassword").as("updatepasswordRequest");
+        cy.url().should("include", "/AdminV");
+        cy.get("#menu").should("be.visible").click();
+        cy.get("#changepass").click();
+        cy.get("#pass1").type(admin1.password);
+        cy.get("#pass2").type(newPassword);
+        cy.get("#pass22").type(newPassword);
+        cy.get("#cp_submit").click();
+        cy.wait("@updatepasswordRequest").its("response.statusCode").should("eq", 200);
         admin1.password = newPassword; // Actualizar contraseña en variable
 
     });

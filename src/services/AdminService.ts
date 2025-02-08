@@ -99,7 +99,7 @@ export default class AdminService {
             }
             console.log(`updated whidht id ${id} and data ${ JSON.stringify(data)}`)
             const token: string = returnToken();
-            const response: Response = await fetch(`${url}/${id}`, {
+            const response: Response = await fetch(`${url}${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

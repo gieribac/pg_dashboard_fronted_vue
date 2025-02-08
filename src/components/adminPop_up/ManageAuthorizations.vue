@@ -126,7 +126,7 @@
         </div>
     </div>
     <div class="button__container">
-    <button id="ma_cancel" class="cancel" type="button" @click="close_MAPop_up">Cancelar</button></div>
+    <button id="ma_cancel" class="cancel" type="button" @click="close_MAPop_up">{{activeTab ?'Cerrar':'Cancelar'}}</button></div>
     </div>
 </div>
 </template>
@@ -267,10 +267,12 @@
         gap: 2px;
         max-height: 60vh;
         overflow-y: auto;
-
     }
-
-    .control-registro .registro {
+    
+    .control-registro .registros .registro details:not([open]) {
+        cursor: pointer;
+    }
+     .control-registro .registro {
         font-size: 12px;
         border: solid 1px gray;
         border-radius: 5px;
@@ -286,6 +288,7 @@
         margin: 3px auto;
         display: block;
     }
+
     .accept:disabled {
         cursor: not-allowed; 
         opacity: 0.6; 

@@ -22,8 +22,7 @@
   
      //service for dashboards in FormD
   const service = new PostService();
-  let posts = ref<Dashboard_Data[]>([]);
-  posts = service.getPosts();
+  const posts = service.getPosts();
   //service for authorizations
   const serviceMAData = new AuthorizedService;
   let authorizations = ref<MAData[]>([]);
@@ -46,7 +45,7 @@
   const passChangePopup1: Ref<boolean> = ref(false);
   const statusOA: Ref<boolean> = ref(false);
   let otorgarAutorizacion: boolean = false;
-  let flag_updateDataView: boolean = false;
+  let flag_updateDataView: Ref<boolean> = ref(false);
   let dataAdmin: AdminRegData = EMPTY_ADMIN;
   if (decodedToken !== null) {
     otorgarAutorizacion = decodedToken.main === 1; 
@@ -87,13 +86,13 @@
   const triggerAlert = new TriggerAlertClass;
 
   // Maneja el cierre de la alerta desde el hijo
-  const handleClose = async () => {
-    triggerAlert.set_showAlert(ref(false));
+  const handleClose = () : void => {
     const flag_to_main: boolean = ['clave actualizada', 'cuenta eliminada'].includes(triggerAlert.get_sm());
-    if (flag_to_main) {      
-      let response = await serviceAdminAuth.logout();
-      if (response) {fRegresar();}
+    console.log(' handleClose ')
+    if (flag_to_main) {     
+      fRegresar()
     }
+    triggerAlert.set_showAlert(ref(false));
   };
   const updateDash = async (data: Dashboard_Data, id: string): Promise<void> => {
     try {
@@ -101,8 +100,8 @@
       const success = await service.updatePost(data, id); 
       triggerAlert.set_showAlert(ref(true));
       if (success) {
-        updateDataView(data, id, undefined);
         triggerAlert.set_sms(true,'Datos actualizados');
+        await updateDataView();
         return
       } else {
         triggerAlert.set_sms(false,'Actualizanción fallida');
@@ -118,6 +117,7 @@
       triggerAlert.set_showAlert(ref(true));
       if (success) {
         triggerAlert.set_sms(true,'Dashboard Eliminado');
+        await updateDataView();        
         return
       } else {
         triggerAlert.set_sms(false,'Fallido: eliminar');
@@ -129,14 +129,11 @@
   }
   const sendDash = async (data: Dashboard_Data): Promise<void> => {    
     try {
-      console.log(posts.value.length)
       const success = await service.createPost(data);
-      console.log(posts.value.length)
       triggerAlert.set_showAlert(ref(true));
       if (success) {
-        updateDataView(undefined, undefined, data);
-        console.log(posts.value.length)
         triggerAlert.set_sms(true,'Dashboard Cargado');
+        await updateDataView();
         return
       } else {
         triggerAlert.set_sms(false,'Fallido: Cargar Dashboard');
@@ -146,23 +143,9 @@
       console.log('Error al Cargar Dashboard: ',e);
     }
   }
-  const updateDataView = (source?: Partial<Dashboard_Data>, idBuscado?: string, data?: Dashboard_Data) : void => {    
-      flag_updateDataView = !flag_updateDataView;
-      if (data) {
-        const idf = posts.value[posts.value.length-2].id;
-        if (typeof(idf) === 'number') {
-          data.id = idf+1;
-          posts.value[posts.value.length-1] = data;
-        }        
-        posts.value.splice(posts.value.length-1,1);
-        posts.value.push(data);
-      } else {
-        const found: Dashboard_Data | undefined = posts.value.find(objeto => objeto.id === idBuscado);
-        if (found != undefined) {
-          const index: number = posts.value.findIndex(objeto => objeto.id === idBuscado);
-          posts.value[index] = Object.assign(found,source);
-        }    
-      }       
+  const updateDataView = async () : Promise<void> => {    
+      flag_updateDataView.value = !flag_updateDataView.value;  
+      await service.fetchAll()   
   }
   const sendDataUpdateAdmin = async (data:  Partial<AdminRegData>): Promise<void> => {
     try {
@@ -243,15 +226,18 @@
     <FormD 
       :flag="dForm"  
       @sendDash="sendDash" 
-      :flagWatchData="false" 
+      :flagWatchData="ref(false)" 
     />
     <h2>Edición de dashboards</h2>
+    <p v-for="(post, index) in posts"
+      :key="index"      
+      >{{post}}</p>
     <FormD
       v-for="(post, index) in posts"
       :key="index"      
       :flag="!dForm"
       :EXISTING_DASHBOARD="ref(post)"
-      :flagWatchData="flag_updateDataView"
+      :flagWatchData="ref(flag_updateDataView)"
       @sendDash="updateDash"
       @deleteDash="destroyDash"
     />

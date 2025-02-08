@@ -24,11 +24,14 @@ class PostService {
     // Método para obtener todos los posts
     async fetchAll(): Promise<void> {
         try {
+            console.log('fetchAll')
             const response: Response = await fetch(url);
-            const json= await response.json();
-            const data: Dashboard_Data[] = json.data;
-            this.posts.value = data;
+            const json = await response.json();
+            if (Array.isArray(json)){
+              this.posts.value = json;  
+            }            
         } catch (e) {
+            this.posts.value = []; 
             console.error('Error fetching posts: ', e);
         }
     }
@@ -65,8 +68,10 @@ class PostService {
             if (!response.ok) {
                 throw new Error(`Error creating post: ${response.status}`);
             }
-            const newPost: Dashboard_Data = await response.json();
-            this.posts.value.push(newPost); // Agregar el nuevo post a la lista local
+            const newPost = await response.json();
+            if (newPost?.map) {
+                this.posts.value.push(newPost.map); // Agregar el nuevo post a la lista local
+            }
             return newPost;
         } catch (e) {
             console.error(e);
@@ -138,13 +143,14 @@ class PostService {
                 throw new Error(`Error updating post: ${response.status}`);
             }
 
-            const updatedPost: Dashboard_Data = await response.json();
-
+            const updatedPost = await response.json();
+            console.log('updatedPost.data',updatedPost.map);
             // Actualizar el post localmente
             const index = this.posts.value.findIndex(post => post.id === id);
-            if (index !== -1) {
-                this.posts.value[index] = { ...this.posts.value[index], ...updateData };
+            if (index !== -1 && updatedPost?.map) {
+                this.posts.value.splice(index, 1, { ...this.posts.value[index], ...updatedPost.map });
             }
+            
 
             return updatedPost;
         } catch (e) {

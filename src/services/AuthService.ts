@@ -29,8 +29,6 @@ export default class AuthService {
 
     async login(obj: AdminLoginData): Promise<boolean> {
         try {
-            console.log(JSON.stringify(obj));
-            console.log(this.getTokenFromCookie());
             const response = await fetch( `${urlAdminAuth}login`, {
                 method: 'POST',
                 headers: {
