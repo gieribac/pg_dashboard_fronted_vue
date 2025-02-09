@@ -16,11 +16,7 @@
   let lg_: AdminLoginData = {username:'', password: ''};
   const handleClose = () => {
     triggerAlert.set_showAlert(ref(false));
-    console.log(triggerAlert.get_sm())
-    console.log(triggerAlert.get_smstatus())
-    console.log(triggerAlert.get_sm() === 'Sesión iniciada');
-    if (triggerAlert.get_sm() === 'Sesión iniciada'){
-      
+    if (triggerAlert.get_sm() === 'Sesión iniciada'){      
       router.push({name:'AdminV'})
     }
   };
@@ -60,10 +56,10 @@
   };
 
   const service = new PostService();
-  const posts = service.getPosts();
+  const posts = service.getPublicPosts();
   onMounted(async () => {
-    await service.fetchAll();
-    console.log(service.getPosts())
+    await service.fetchAllPublics();
+    console.log('posts',posts)
   })
 
   const showRegisterPopup: Ref<boolean> = ref(false);

@@ -4,14 +4,15 @@ import { getDecodedToken, returnToken } from './authHelpers';
 import DecodedToken from '../interfaces/DecodedToken';
 import { isTokenValid } from '../services/authHelpers'; 
 import { useRouter } from 'vue-router'; // Para redirigir
-const url: string = 'http://127.0.0.1:8000/api/maps';
+const url: string = 'http://127.0.0.1:8000/api/maps/';
 
 class PostService {
     private router = useRouter();
     private posts: Ref<Dashboard_Data[]>;
-
+    private publicPosts: Ref<Dashboard_Data[]>;
     constructor() {
         this.posts = ref<Dashboard_Data[]>([]);
+        this.publicPosts = ref<Dashboard_Data[]>([]);
     }
     private routerToMain(){
         this.router.push({ name: 'MainV' });
@@ -20,11 +21,13 @@ class PostService {
     getPosts(): Ref<Dashboard_Data[]> {
         return this.posts;
     }
+    getPublicPosts(): Ref<Dashboard_Data[]> {
+        return this.publicPosts;
+    }
 
     // Método para obtener todos los posts
     async fetchAll(): Promise<void> {
         try {
-            console.log('fetchAll')
             const response: Response = await fetch(url);
             const json = await response.json();
             if (Array.isArray(json)){
@@ -32,6 +35,18 @@ class PostService {
             }            
         } catch (e) {
             this.posts.value = []; 
+            console.error('Error fetching posts: ', e);
+        }
+    }
+    async fetchAllPublics(): Promise<void> {
+        try {
+            const response: Response = await fetch(`${url}?filter=public`);
+            const json = await response.json();
+            if (Array.isArray(json)){
+              this.publicPosts.value = json;  
+            }            
+        } catch (e) {
+            this.publicPosts.value = []; 
             console.error('Error fetching posts: ', e);
         }
     }
@@ -53,7 +68,7 @@ class PostService {
             }
             console.log(JSON.stringify(data));
             console.log('token',token);
-            const response: Response = await fetch(`${url}/`, {
+            const response: Response = await fetch(`${url}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -88,7 +103,7 @@ class PostService {
                 throw new Error('Token vencido');
             }
             const token: string = returnToken();
-            const response: Response = await fetch(`${url}/${id}`, {
+            const response: Response = await fetch(`${url}${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -127,7 +142,7 @@ class PostService {
                 throw new Error('token decoded null');
             }
             console.log(`updated whidht id ${id} and data ${ JSON.stringify(data)}`)
-            const response: Response = await fetch(`${url}/${id}`, {
+            const response: Response = await fetch(`${url}${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
