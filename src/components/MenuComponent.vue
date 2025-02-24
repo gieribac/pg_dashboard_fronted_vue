@@ -2,7 +2,7 @@
   import { listEmmits } from '../components/constantInfo/listEmmits';
   import { onMounted, ref, Ref} from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import AlertPop_up from '../components/AlertPop_up.vue';
+  import AlertPop_up from './AlertPopup.vue';
   import AuthService from '../services/AuthService';
   import TriggerAlertClass from '../class/TriggerAlertClass';
   const router = useRouter();

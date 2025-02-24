@@ -5,7 +5,7 @@
   import LoginPopup from '../components/mainPop_up/LoginPopup.vue';
   import PostService from '../services/PostService';
   import DashboardMain from '../components/DashboardMain.vue';
-  import AlertPop_up from '../components/AlertPop_up.vue';
+  import AlertPop_up from '../components/AlertPopup.vue';
   import AdminRegData from '../interfaces/AdminRegData';
   import TriggerAlertClass from '../class/TriggerAlertClass';
   import AdminLoginData from '../interfaces/AdminLoginData';  

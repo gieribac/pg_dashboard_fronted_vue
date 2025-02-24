@@ -8,9 +8,9 @@
   import PatchUpdate from '../components/adminPop_up/PatchUpdate.vue';
   import FormD from '../components/FormD.vue';
   import MenuComponent from '../components/MenuComponent.vue';
-  import ManageAuthorizations from '../components/adminPop_up/ManageAuthorizations.vue';  
+  import ManageAuthorizations from '../components/adminPop_up/Authorizations.vue';  
   import MAData from '../interfaces/MAData';
-  import AlertPop_up from '../components/AlertPop_up.vue';
+  import AlertPop_up from '../components/AlertPopup.vue';
   import Dashboard_Data from '../interfaces/DashboardData';
   import PostService from '../services/PostService';
   import DecodedToken from '../interfaces/DecodedToken';
@@ -229,9 +229,6 @@
       :flagWatchData="ref(false)" 
     />
     <h2>Edición de dashboards</h2>
-    <p v-for="(post, index) in posts"
-      :key="index"      
-      >{{post}}</p>
     <FormD
       v-for="(post, index) in posts"
       :key="index"      
