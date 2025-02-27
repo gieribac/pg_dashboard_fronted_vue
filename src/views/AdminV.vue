@@ -48,7 +48,7 @@
   let flag_updateDataView: Ref<boolean> = ref(false);
   let dataAdmin: AdminRegData = EMPTY_ADMIN;
   if (decodedToken !== null) {
-    otorgarAutorizacion = decodedToken.main === 1; 
+    otorgarAutorizacion = decodedToken.main; 
     const {name, no_doc, email, username} = decodedToken;
     dataAdmin = {name: name, no_doc: no_doc, email: email, username: username};
   }
@@ -291,9 +291,7 @@
 .const__main {
   width: 100vw;
   margin: auto;
-  background-color: red;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-  border: 2px solid red;
 }
 @media (max-width: 768px) {
   .cont__main h2 {

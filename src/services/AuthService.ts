@@ -1,11 +1,9 @@
 import { ref, Ref } from 'vue';
-import Cookies from 'js-cookie'; // Importar js-cookie
 import AdminLoginData from '../interfaces/AdminLoginData';
-import { getDecodedToken, isTokenValid, returnToken } from './authHelpers';
+import { getDecodedToken, isTokenValid, returnToken, setTokenInCookie ,getTokenFromCookie ,clearTokenFromCookie} from './authHelpers';
 import { useRouter } from 'vue-router'; // Para redirigir
 import DecodedToken from '../interfaces/DecodedToken';
 const urlAdminAuth: string = 'http://127.0.0.1:8000/api/adminlog/';
-
 
 export default class AuthService {
     private jwt: Ref<string>;
@@ -44,7 +42,7 @@ export default class AuthService {
 
             // Guardar el token en una cookie
             this.jwt.value = responseJson.token;
-            this.setTokenInCookie(responseJson.token);
+            setTokenInCookie(responseJson.token);
 
             return true;
         } catch (e) {
@@ -53,29 +51,9 @@ export default class AuthService {
         }  
     }
 
-    // Método para guardar el token en una cookie
-    private setTokenInCookie(token: string): void {
-        const oneHour: number = 1 / 24;
-        Cookies.set('jwt_token', token, { 
-            expires: oneHour, // Expira en 1 hora 
-            secure: true, // Solo en HTTPS
-            sameSite: 'None', // Estrictamente en el mismo sitio
-        });
-    }
-
-    // Método para obtener el token desde la cookie
-    getTokenFromCookie(): string | undefined {
-        return Cookies.get('jwt_token');
-    }
-
-    // Método para eliminar la cookie
-    clearTokenFromCookie(): void {
-        Cookies.remove('jwt_token');
-    }
-
     async logout(): Promise<boolean> {
         try {
-            const token = this.getTokenFromCookie();
+            const token = getTokenFromCookie();
             if (!token) {
                 this.error.value = 'No token found';
                 return false;
@@ -98,7 +76,7 @@ export default class AuthService {
 
             // Eliminar el token en memoria y en la cookie
             this.jwt.value = '';
-            this.clearTokenFromCookie();
+            clearTokenFromCookie();
 
             return true;
         } catch (e) {
@@ -110,7 +88,7 @@ export default class AuthService {
     async me(): Promise<boolean> {
         try {
 
-            const token = this.getTokenFromCookie();
+            const token = getTokenFromCookie();
             console.log('token'+token);
             if (!token) {
                 this.error.value = 'No token found';
@@ -129,7 +107,7 @@ export default class AuthService {
                 console.log('Logout Failed')
                 // Eliminar el token en memoria y en la cookie
                 this.jwt.value = '';
-                this.clearTokenFromCookie();
+                clearTokenFromCookie();
                 return false;
             }
             return true;
@@ -141,7 +119,7 @@ export default class AuthService {
 
     async changePass(obj: object): Promise<boolean> {
         try{
-            const token = this.getTokenFromCookie();
+            const token = getTokenFromCookie();
             if (!token) {
                 this.error.value = 'No token found';
                 return false;
@@ -172,7 +150,7 @@ export default class AuthService {
     async deleteAdmin(data: object): Promise<boolean | null> {
         try {
             if (!isTokenValid()) {
-                this.routerToMain(); // Redirige al usuario a l a página de inicio
+                this.routerToMain(); // Redirige al usuario a la página de inicio
                 throw new Error('Token vencido');
             }
             const decodedToken: DecodedToken | null = getDecodedToken();

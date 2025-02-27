@@ -1,8 +1,7 @@
 import { ref, Ref } from 'vue';
-import { getDecodedToken } from './authHelpers';
 import AdminRegData from '../interfaces/AdminRegData';
 import DecodedToken from '../interfaces/DecodedToken';
-import { isTokenValid, returnToken  } from './authHelpers'; 
+import { isTokenValid, returnToken, getDecodedToken  } from './authHelpers'; 
 import { useRouter } from 'vue-router'; // Para redirigir
 import BaseAdminData from '../interfaces/BaseAdminData';
 const url: string = 'http://127.0.0.1:8000/api/admin/';
@@ -20,7 +19,7 @@ export default class AdminService {
         return this.admins;
     }
  
-    // Método para obtener todos (show)
+    // Método para obtener todos los registros de administrador
     async fetchAll(): Promise<void> {
         try {
             if (!isTokenValid()) {

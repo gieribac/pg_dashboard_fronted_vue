@@ -1,23 +1,34 @@
-import AuthService from './AuthService';
+
 import { jwtDecode } from 'jwt-decode'; // Importación con llaves para jwtDecode
+import Cookies from 'js-cookie'; // Importar js-cookie
 import DecodedToken from '../interfaces/DecodedToken';
-const authService = new AuthService();
+
 
 export function returnToken(): string {
-  const token: string | undefined = authService.getTokenFromCookie();
+  const token: string | undefined = getTokenFromCookie();
   if (typeof(token) === 'string') {
     return token;
   }
   return 'token undefined';
 }
+
+// Método para guardar el token en una cookie
+export function setTokenInCookie(token: string): void {
+  const oneHour: number = 1 / 24;
+  Cookies.set('jwt_token', token, { 
+      expires: oneHour, // Expira en 1 hora 
+      secure: true, // Solo en HTTPS
+      sameSite: 'None', // Estrictamente en el mismo sitio
+  });
+}
   
 export function isAuthenticated(): boolean {
-  const token = authService.getTokenFromCookie();
+  const token = getTokenFromCookie();
   return token !== undefined && token !== ''; // Autenticado si el token existe y no está vacío
 }
 
 export function getDecodedToken():DecodedToken | null {
-    const token = authService.getTokenFromCookie();
+    const token = getTokenFromCookie();
     if (!token) {
       return null; // Retorna null si no hay token
     }
@@ -28,10 +39,19 @@ export function getDecodedToken():DecodedToken | null {
       return null; // Retorna null si ocurre un error
     }
 }
+    // Método para obtener el token desde la cookie
+  export function getTokenFromCookie(): string | undefined {
+      return Cookies.get('jwt_token');
+  }
+
+  // Método para eliminar la cookie
+  export function clearTokenFromCookie(): void {
+      Cookies.remove('jwt_token');
+  }
 
 export function isTokenValid(): boolean {
   // Obtén el token desde la cookie
-  const token = authService.getTokenFromCookie();    
+  const token = getTokenFromCookie();    
   if (!token) {
     return false; // No hay token disponible
   }  
