@@ -7,5 +7,6 @@ export const listEmmits: string[] = [
     "eChange", 
     "ePatch", 
     "eDestroy", 
-    "eAutorizar"
+    "eAutorizar",
+    "cs"
   ];

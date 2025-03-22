@@ -25,7 +25,8 @@
   const auth = new AuthService();
 
   const logOut = async () => {
-    try {      
+    try {
+      emit(listEmmits[9], true);      
       const exito = await auth.logout();
       triggerAlert.set_showAlert(ref(true));
       if (exito) {
@@ -81,7 +82,6 @@
         return
       }   
     }
-    console.log(listEmmits[num])
     emit(listEmmits[num], m.value[num])
   };
 

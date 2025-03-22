@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useRouter } from 'vue-router';
   import { ref, Ref, onMounted } from 'vue';
   import MenuComponent from '../components/MenuComponent.vue';
   import RegPopup from '../components/mainPop_up/RegPopup.vue';
@@ -10,7 +11,7 @@
   import TriggerAlertClass from '../class/TriggerAlertClass';
   import AdminLoginData from '../interfaces/AdminLoginData';  
   import AuthService from '../services/AuthService';
-  import { useRouter } from 'vue-router';
+  import InfoPopup from '../components/mainPop_up/InfoPopup.vue';
   import AdminService from '../services/AdminService';
   const router = useRouter();
   let lg_: AdminLoginData = {username:'', password: ''};
@@ -64,11 +65,13 @@
 
   const showRegisterPopup: Ref<boolean> = ref(false);
   const showLoginPopup: Ref<boolean> = ref(false);
+  const showInfoPopup: Ref<boolean> = ref(false);
   const triggerAlert = new TriggerAlertClass;
   // Métodos para abrir y cerrar cada pop-up
   const registerPop_up = ():void => {
     showRegisterPopup.value = true;
     showLoginPopup.value = false;
+    showInfoPopup.value = false;
   };
 
   const closeRegisterPop_up = ():void => {
@@ -76,9 +79,9 @@
   };
 
   const loginPop_up = ():void => {
-    console.log('loginp')
     showLoginPopup.value = true;
     showRegisterPopup.value = false;
+    showInfoPopup.value = false;
   };
 
   const closeLoginPop_up = ():void => {
@@ -86,51 +89,74 @@
   };
   
   const closed = ():void => {
+    showInfoPopup.value = false;
     showLoginPopup.value = false;
     showRegisterPopup.value = false;
   };
 
   const showInfo = ():void => {
-    alert("mostranfo información")
-  };
-  console.log(posts)
+    showInfoPopup.value = !showInfoPopup.value;
+    showLoginPopup.value = false;
+    showRegisterPopup.value = false;
+  };  
+
 </script>
 
 <template>
-  <MenuComponent @in="loginPop_up" @rg="registerPop_up" @cl="closed" @info="showInfo" :datalogin="lg_"/>
-  <RegPopup @pd="closeRegisterPop_up" @rgd="register" v-if="showRegisterPopup" class="popup"/>
-  <LoginPopup @pd="closeLoginPop_up" @lg="login" v-if="showLoginPopup" class="popup"/>
-  <DashboardMain
-      v-for="(post, index) in posts"
-      :key="index"   
-      :EXISTING_DASHBOARD="post"
-    />
+  <div class="background">
+    <MenuComponent @in="loginPop_up" @rg="registerPop_up" @cl="closed" @info="showInfo" :datalogin="lg_" @cs="closed"/>
+    <RegPopup @pd="closeRegisterPop_up" @rgd="register" v-if="showRegisterPopup" class="popup"/>
+    <LoginPopup @pd="closeLoginPop_up" @lg="login" v-if="showLoginPopup" class="popup"/>
+    <DashboardMain
+        v-for="(post, index) in posts"
+        :key="index"   
+        :EXISTING_DASHBOARD="post"
+      />
     <AlertPop_up 
       v-if="triggerAlert.get_showAlert()" 
       :sm="triggerAlert.get_sm()" 
       :smstatus="triggerAlert.get_smstatus()"
       @close="handleClose"
     />
-    
+    <InfoPopup>
+    <div  v-if="showInfoPopup" class="info_popup" >
+        <div class="info">
+            <p>Este prototipo software permite la visualización de las métricas de cobertura del servicio de radiodifusión digital a través de un aplicativo web.</p>
+            <p>Interactúe con el dashboard para ver a detalle las métricas.</p>
+            <div class="button__container">
+              <button id="acceptinfo" @click="showInfo" class="button accept">Aceptar</button>
+            </div>
+        </div>
+      </div>
+    </InfoPopup>
+  </div>
 </template>
-<style scoped>
 
-  .popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fbfff1;
-    padding: 20px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    z-index: 1000;
-    width: 20%;
-    min-width: 20%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+<style scoped>
+/* Aplica un fondo a todo el sitio */
+.background {
+  
+  min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+  width: 100%;
+}
+
+/* Estilos existentes */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fbfff1;
+  padding: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  z-index: 1000;
+  width: 20%;
+  min-width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 </style>
 
 
